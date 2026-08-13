@@ -1,18 +1,34 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
-    <div>
+    <BrowserRouter>
 
       <Sidebar />
 
       <Header />
 
-      <Dashboard />
+      <Routes>
 
-    </div>
+        {/* Dashboard */}
+
+        <Route
+          path="/"
+          element={<Navigate to="/dashboard" replace />}
+        />
+
+        <Route
+          path="/dashboard"
+          element={<Dashboard />}
+        />
+
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 
