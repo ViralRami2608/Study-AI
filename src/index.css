@@ -875,3 +875,256 @@ body {
 
   cursor: pointer;
 }
+
+/* ============================= */
+/* NOTES PAGE */
+/* ============================= */
+
+.notes-page {
+  margin-left: 240px;
+
+  height: calc(100vh - 60px);
+
+  padding: 18px 25px;
+
+  box-sizing: border-box;
+
+  background-color: #f8fbff;
+
+  overflow: hidden;
+}
+
+
+/* Page Header */
+
+.notes-page-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 15px;
+}
+
+.notes-page-header h1 {
+  margin: 0 0 4px;
+
+  font-size: 23px;
+
+  color: #1f2937;
+}
+
+.notes-page-header p {
+  margin: 0;
+
+  font-size: 13px;
+
+  color: #6b7280;
+}
+
+
+/* Add Note Button */
+
+.add-note-button {
+  padding: 10px 16px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background-color: #36bfff;
+
+  color: white;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+
+/* Search and Filter */
+
+.notes-tools {
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+}
+
+.notes-tools input {
+  flex: 1;
+
+  height: 40px;
+
+  padding: 0 13px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 6px;
+
+  outline: none;
+
+  font-size: 13px;
+
+  box-sizing: border-box;
+}
+
+.notes-tools input:focus {
+  border-color: #36bfff;
+}
+
+.notes-tools select {
+  width: 150px;
+
+  height: 40px;
+
+  padding: 0 10px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 6px;
+
+  background-color: white;
+
+  outline: none;
+
+  font-size: 13px;
+
+  color: #374151;
+}
+
+
+/* Notes Grid */
+
+.notes-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 15px;
+}
+
+
+/* Note Card */
+
+.note-card {
+  background-color: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 8px;
+
+  padding: 18px;
+
+  box-sizing: border-box;
+
+  min-height: 210px;
+}
+
+
+/* Card Top */
+
+.note-card-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 15px;
+}
+
+
+/* Subject */
+
+.note-subject {
+  display: inline-block;
+
+  padding: 5px 9px;
+
+  background-color: #eaf8ff;
+
+  color: #159bd1;
+
+  border-radius: 5px;
+
+  font-size: 11px;
+
+  font-weight: 500;
+}
+
+
+/* Three Dot Button */
+
+.note-menu {
+  border: none;
+
+  background: none;
+
+  font-size: 20px;
+
+  color: #6b7280;
+
+  cursor: pointer;
+}
+
+
+/* Note Title */
+
+.note-card h3 {
+  margin: 0 0 8px;
+
+  font-size: 17px;
+
+  color: #1f2937;
+}
+
+
+/* Note Description */
+
+.note-card p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* Card Bottom */
+
+.note-card-bottom {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 25px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #f0f0f0;
+}
+
+.note-card-bottom span {
+  font-size: 11px;
+
+  color: #9ca3af;
+}
+
+.note-card-bottom button {
+  border: none;
+
+  background: none;
+
+  color: #36bfff;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}

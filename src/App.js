@@ -10,6 +10,7 @@ import Header from "./components/Header";
 
 import Dashboard from "./pages/Dashboard";
 import AIAssistant from "./pages/AIAssistant";
+import Notes from "./pages/Notes";
 
 
 function App() {
@@ -48,6 +49,14 @@ function App() {
         <Route
           path="/ai-assistant"
           element={<AIAssistant />}
+        />
+
+
+        {/* Notes */}
+
+        <Route
+          path="/notes"
+          element={<Notes />}
         />
 
       </Routes>
