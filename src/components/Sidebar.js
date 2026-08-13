@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 function Sidebar() {
   return (
     <aside className="sidebar">
@@ -5,49 +7,92 @@ function Sidebar() {
       {/* Logo */}
 
       <div className="sidebar-logo">
+
         <h2>StudyAI</h2>
+
         <p>Smart Learning</p>
+
       </div>
 
 
-      {/* Navigation */}
+      {/* Main Navigation */}
 
       <nav className="sidebar-nav">
 
-        <div className="nav-item active">
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           Dashboard
-        </div>
+        </NavLink>
 
-        <div className="nav-item">
+
+        <NavLink
+          to="/ai-assistant"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           AI Assistant
-        </div>
+        </NavLink>
 
-        <div className="nav-item">
+
+        <NavLink
+          to="/notes"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           Notes
-        </div>
+        </NavLink>
 
-        <div className="nav-item">
+
+        <NavLink
+          to="/study-planner"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           Study Planner
-        </div>
+        </NavLink>
 
-        <div className="nav-item">
+
+        <NavLink
+          to="/study-timer"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           Study Timer
-        </div>
+        </NavLink>
 
       </nav>
 
 
-      {/* Bottom Menu */}
+      {/* Bottom Navigation */}
 
       <div className="sidebar-bottom">
 
-        <div className="nav-item">
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           Profile
-        </div>
+        </NavLink>
 
-        <div className="nav-item">
+
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
           Settings
-        </div>
+        </NavLink>
 
       </div>
 
