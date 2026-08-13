@@ -11,6 +11,8 @@ import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import AIAssistant from "./pages/AIAssistant";
 import Notes from "./pages/Notes";
+import StudyPlanner from "./pages/StudyPlanner";
+import StudyTimer from "./pages/StudyTimer";
 
 
 function App() {
@@ -57,6 +59,22 @@ function App() {
         <Route
           path="/notes"
           element={<Notes />}
+        />
+
+
+        {/* Study Planner */}
+
+        <Route
+          path="/study-planner"
+          element={<StudyPlanner />}
+        />
+
+
+        {/* Study Timer */}
+
+        <Route
+          path="/study-timer"
+          element={<StudyTimer />}
         />
 
       </Routes>
