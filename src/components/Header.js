@@ -1,27 +1,29 @@
+import React from "react";
+import { useLocation } from "react-router-dom";
+
 function Header() {
+  const location = useLocation();
+
+  const pageTitles = {
+    "/dashboard": "Dashboard",
+    "/ai-assistant": "AI Study Assistant",
+    "/notes": "My Notes",
+    "/study-planner": "Study Planner",
+    "/study-timer": "Study Timer",
+    "/profile": "My Profile",
+    "/settings": "Settings",
+  };
+
+  const currentTitle =
+    pageTitles[location.pathname] || "Smart Study Assistant";
+
   return (
-    <header className="header">
+    <header className="app-header">
 
-      {/* Left Side */}
+      {/* Current Page */}
 
-      <div className="header-left">
-
-        <h2>Dashboard</h2>
-
-        <p>Welcome back to StudyAI</p>
-
-      </div>
-
-
-      {/* Search */}
-
-      <div className="header-search">
-
-        <input
-          type="text"
-          placeholder="Search anything..."
-        />
-
+      <div className="header-page-title">
+        <h2>{currentTitle}</h2>
       </div>
 
 
@@ -29,26 +31,21 @@ function Header() {
 
       <div className="header-right">
 
-        {/* Notification */}
+        <div className="header-user">
 
-        <button className="notification-btn">
-          🔔
-        </button>
-
-
-        {/* Profile */}
-
-        <div className="profile-mini">
-
-          <div className="profile-avatar">
-            S
+          <div className="header-avatar">
+            VR
           </div>
 
-          <div className="profile-info">
+          <div className="header-user-info">
 
-            <strong>Student</strong>
+            <span className="header-user-name">
+              Student
+            </span>
 
-            <span>Study Member</span>
+            <span className="header-user-role">
+              Student
+            </span>
 
           </div>
 

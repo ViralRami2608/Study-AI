@@ -13,6 +13,8 @@ import AIAssistant from "./pages/AIAssistant";
 import Notes from "./pages/Notes";
 import StudyPlanner from "./pages/StudyPlanner";
 import StudyTimer from "./pages/StudyTimer";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 
 function App() {
@@ -75,6 +77,22 @@ function App() {
         <Route
           path="/study-timer"
           element={<StudyTimer />}
+        />
+
+
+        {/* Profile */}
+
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
+
+
+        {/* Settings */}
+
+        <Route
+          path="/settings"
+          element={<Settings />}
         />
 
       </Routes>

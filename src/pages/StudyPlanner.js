@@ -7,84 +7,69 @@ function StudyPlanner() {
       {/* Page Header */}
 
       <div className="planner-header">
-
         <div>
           <h1>Study Planner</h1>
-
-          <p>
-            Plan your study tasks and manage your daily goals.
-          </p>
+          <p>Plan and manage your daily study tasks.</p>
         </div>
 
-        <button className="add-task-button">
+        <button className="planner-add-button">
           + Add Task
         </button>
-
       </div>
 
 
-      {/* Today's Progress */}
+      {/* Planner Summary */}
 
-      <div className="planner-progress">
+      <div className="planner-summary">
 
-        <div>
-          <h3>Today's Progress</h3>
-
-          <p>
-            2 of 5 tasks completed
-          </p>
+        <div className="planner-summary-card">
+          <span>Total Tasks</span>
+          <strong>6</strong>
         </div>
 
-        <div className="progress-number">
-          40%
+        <div className="planner-summary-card">
+          <span>Completed</span>
+          <strong>3</strong>
         </div>
 
-      </div>
+        <div className="planner-summary-card">
+          <span>Pending</span>
+          <strong>3</strong>
+        </div>
 
-
-      {/* Progress Bar */}
-
-      <div className="progress-bar">
-        <div className="progress-fill"></div>
       </div>
 
 
       {/* Today's Tasks */}
 
-      <div className="tasks-section">
+      <div className="planner-section">
 
-        <div className="section-title">
+        <div className="planner-section-header">
           <h2>Today's Tasks</h2>
 
-          <span>
-            Thursday, August 13
-          </span>
+          <select defaultValue="today">
+            <option value="today">Today</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="week">This Week</option>
+          </select>
         </div>
 
 
         {/* Task 1 */}
 
-        <div className="task-item completed">
+        <div className="planner-task">
 
-          <input
-            type="checkbox"
-            defaultChecked
-          />
-
-          <div className="task-info">
-
-            <h3>
-              Revise JavaScript Basics
-            </h3>
-
-            <p>
-              Variables, functions and arrays
-            </p>
-
+          <div className="task-check completed">
+            ✓
           </div>
 
-          <span className="task-time">
-            1 Hour
+          <div className="task-details">
+            <h3>Study DBMS Normalization</h3>
+            <p>DBMS • 9:00 AM - 10:00 AM</p>
+          </div>
+
+          <span className="task-status completed-status">
+            Completed
           </span>
 
         </div>
@@ -92,27 +77,18 @@ function StudyPlanner() {
 
         {/* Task 2 */}
 
-        <div className="task-item completed">
+        <div className="planner-task">
 
-          <input
-            type="checkbox"
-            defaultChecked
-          />
-
-          <div className="task-info">
-
-            <h3>
-              Practice SQL Queries
-            </h3>
-
-            <p>
-              Joins, Group By and Subqueries
-            </p>
-
+          <div className="task-check">
           </div>
 
-          <span className="task-time">
-            1 Hour
+          <div className="task-details">
+            <h3>Practice JavaScript Arrays</h3>
+            <p>JavaScript • 11:00 AM - 12:00 PM</p>
+          </div>
+
+          <span className="task-status pending-status">
+            Pending
           </span>
 
         </div>
@@ -120,26 +96,18 @@ function StudyPlanner() {
 
         {/* Task 3 */}
 
-        <div className="task-item">
+        <div className="planner-task">
 
-          <input
-            type="checkbox"
-          />
-
-          <div className="task-info">
-
-            <h3>
-              Study Binary Trees
-            </h3>
-
-            <p>
-              Tree concepts and basic traversal
-            </p>
-
+          <div className="task-check">
           </div>
 
-          <span className="task-time">
-            1.5 Hours
+          <div className="task-details">
+            <h3>DSA Searching Problems</h3>
+            <p>DSA • 4:00 PM - 5:00 PM</p>
+          </div>
+
+          <span className="task-status pending-status">
+            Pending
           </span>
 
         </div>
@@ -147,53 +115,19 @@ function StudyPlanner() {
 
         {/* Task 4 */}
 
-        <div className="task-item">
+        <div className="planner-task">
 
-          <input
-            type="checkbox"
-          />
-
-          <div className="task-info">
-
-            <h3>
-              Work on StudyAI Project
-            </h3>
-
-            <p>
-              Complete the Study Planner UI
-            </p>
-
+          <div className="task-check completed">
+            ✓
           </div>
 
-          <span className="task-time">
-            2 Hours
-          </span>
-
-        </div>
-
-
-        {/* Task 5 */}
-
-        <div className="task-item">
-
-          <input
-            type="checkbox"
-          />
-
-          <div className="task-info">
-
-            <h3>
-              Review Today's Topics
-            </h3>
-
-            <p>
-              Quickly revise everything studied today
-            </p>
-
+          <div className="task-details">
+            <h3>React Components Revision</h3>
+            <p>React.js • 6:00 PM - 7:00 PM</p>
           </div>
 
-          <span className="task-time">
-            30 Min
+          <span className="task-status completed-status">
+            Completed
           </span>
 
         </div>

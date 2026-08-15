@@ -1,221 +1,135 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 function StudyTimer() {
-  const [seconds, setSeconds] = useState(25 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [sessions, setSessions] = useState(2);
-
-  useEffect(() => {
-    let timer;
-
-    if (isRunning && seconds > 0) {
-      timer = setInterval(() => {
-        setSeconds((previousSeconds) => previousSeconds - 1);
-      }, 1000);
-    }
-
-    if (seconds === 0) {
-      setIsRunning(false);
-      setSessions((previousSessions) => previousSessions + 1);
-    }
-
-    return () => clearInterval(timer);
-  }, [isRunning, seconds]);
-
-
-  const formatTime = () => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${String(minutes).padStart(2, "0")}:${String(
-      remainingSeconds
-    ).padStart(2, "0")}`;
-  };
-
-
-  const startTimer = () => {
-    setIsRunning(true);
-  };
-
-
-  const pauseTimer = () => {
-    setIsRunning(false);
-  };
-
-
-  const resetTimer = () => {
-    setIsRunning(false);
-    setSeconds(25 * 60);
-  };
-
-
-  const setStudyTime = (minutes) => {
-    setIsRunning(false);
-    setSeconds(minutes * 60);
-  };
-
-
   return (
     <main className="timer-page">
 
       {/* Page Header */}
 
-      <div className="timer-page-header">
-
+      <div className="timer-header">
         <div>
           <h1>Study Timer</h1>
 
           <p>
-            Focus on your studies with a simple study timer.
+            Focus on your studies and track your study time.
           </p>
         </div>
-
       </div>
 
 
-      {/* Timer Layout */}
+      {/* Timer Main Area */}
 
-      <div className="timer-layout">
+      <div className="timer-container">
 
-        {/* Main Timer */}
+        {/* Subject Selection */}
 
-        <section className="timer-card">
+        <div className="timer-subject">
 
-          <h2>
-            Focus Session
-          </h2>
+          <label>
+            Select Subject
+          </label>
 
-          <p className="timer-mode">
-            Study Time
-          </p>
+          <select defaultValue="dsa">
 
+            <option value="dsa">
+              Data Structures & Algorithms
+            </option>
 
-          {/* Timer */}
+            <option value="dbms">
+              Database Management System
+            </option>
 
-          <div className="timer-display">
-            {formatTime()}
-          </div>
+            <option value="javascript">
+              JavaScript
+            </option>
 
+            <option value="react">
+              React.js
+            </option>
 
-          {/* Timer Controls */}
+          </select>
 
-          <div className="timer-controls">
-
-            {!isRunning ? (
-              <button
-                className="timer-start"
-                onClick={startTimer}
-              >
-                Start
-              </button>
-            ) : (
-              <button
-                className="timer-pause"
-                onClick={pauseTimer}
-              >
-                Pause
-              </button>
-            )}
-
-            <button
-              className="timer-reset"
-              onClick={resetTimer}
-            >
-              Reset
-            </button>
-
-          </div>
+        </div>
 
 
-          {/* Time Selection */}
+        {/* Timer */}
 
-          <div className="timer-options">
+        <div className="timer-display">
 
-            <button
-              onClick={() => setStudyTime(25)}
-            >
-              25 min
-            </button>
+          <span>
+            25:00
+          </span>
 
-            <button
-              onClick={() => setStudyTime(45)}
-            >
-              45 min
-            </button>
-
-            <button
-              onClick={() => setStudyTime(60)}
-            >
-              60 min
-            </button>
-
-          </div>
-
-        </section>
+        </div>
 
 
-        {/* Session Information */}
-
-        <section className="session-card">
-
-          <h2>
-            Today's Study
-          </h2>
+        <p className="timer-status">
+          Ready to start your study session
+        </p>
 
 
-          <div className="session-stat">
+        {/* Timer Buttons */}
+
+        <div className="timer-buttons">
+
+          <button className="timer-start">
+            Start
+          </button>
+
+          <button className="timer-pause">
+            Pause
+          </button>
+
+          <button className="timer-reset">
+            Reset
+          </button>
+
+        </div>
+
+
+        {/* Today's Study Information */}
+
+        <div className="timer-info">
+
+          <div className="timer-info-card">
 
             <span>
-              Completed Sessions
+              Today's Study Time
             </span>
 
             <strong>
-              {sessions}
+              1h 45m
             </strong>
 
           </div>
 
 
-          <div className="session-stat">
+          <div className="timer-info-card">
 
             <span>
-              Current Session
+              Sessions Completed
             </span>
 
             <strong>
-              {isRunning ? "Running" : "Paused"}
+              3
             </strong>
 
           </div>
 
 
-          <div className="session-stat">
+          <div className="timer-info-card">
 
             <span>
-              Default Focus Time
+              Current Subject
             </span>
 
             <strong>
-              25 min
+              DSA
             </strong>
 
           </div>
 
-
-          <div className="timer-tip">
-
-            <h3>
-              Study Tip
-            </h3>
-
-            <p>
-              Keep your phone away and focus on one
-              task until the timer finishes.
-            </p>
-
-          </div>
-
-        </section>
+        </div>
 
       </div>
 
