@@ -809,72 +809,285 @@ body {
   cursor: pointer;
 }
 
-/* ============================= */
-/* NOTES PAGE */
-/* ============================= */
+/* =====================================================
+   NOTES PAGE
+===================================================== */
 
 .notes-page {
   margin-left: 240px;
-  height: calc(100vh - 60px);
-  padding: 18px 25px;
+  margin-top: 60px;
+
+  width: calc(100% - 240px);
+  min-height: calc(100vh - 60px);
+
+  padding: 22px 25px 30px;
+
   box-sizing: border-box;
+
   background-color: #f8fbff;
-  overflow: hidden;
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 
-/* Page Header */
+/* =====================================================
+   NOTES PAGE HEADER
+===================================================== */
 
 .notes-page-header {
   display: flex;
+
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+
+  margin-bottom: 18px;
+}
+
+.notes-page-header > div {
+  min-width: 0;
 }
 
 .notes-page-header h1 {
-  margin: 0 0 4px;
+  margin: 0 0 5px;
+
   font-size: 23px;
+  font-weight: 600;
+
   color: #1f2937;
 }
 
 .notes-page-header p {
   margin: 0;
+
   font-size: 13px;
+
   color: #6b7280;
 }
 
 
-/* Add Note Button */
+/* =====================================================
+   ADD NOTE BUTTON
+===================================================== */
 
 .add-note-button {
-  padding: 10px 16px;
+  flex-shrink: 0;
+
+  height: 40px;
+
+  padding: 0 16px;
+
   border: none;
   border-radius: 6px;
+
   background-color: #36bfff;
-  color: white;
+
+  color: #ffffff;
+
   font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
+
+.add-note-button:hover {
+  background-color: #22b5f5;
+}
+
+
+/* =====================================================
+   ADD / EDIT NOTE FORM
+===================================================== */
+
+.note-form-container {
+  width: 100%;
+
+  margin-bottom: 18px;
+}
+
+.note-form {
+  width: 100%;
+
+  padding: 18px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  box-sizing: border-box;
+}
+
+.note-form h2 {
+  margin: 0 0 15px;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  color: #1f2937;
+}
+
+
+/* Form fields */
+
+.note-form input,
+.note-form select,
+.note-form textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+
+  outline: none;
+
+  background-color: #ffffff;
+
+  color: #374151;
+
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+
+/* Input */
+
+.note-form input {
+  height: 40px;
+
+  padding: 0 12px;
+
+  margin-bottom: 10px;
+}
+
+
+/* Select */
+
+.note-form select {
+  height: 40px;
+
+  padding: 0 12px;
+
+  margin-bottom: 10px;
+
   cursor: pointer;
 }
 
 
-/* Search and Filter */
+/* Textarea */
+
+.note-form textarea {
+  min-height: 110px;
+
+  padding: 11px 12px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+
+/* Focus */
+
+.note-form input:focus,
+.note-form select:focus,
+.note-form textarea:focus {
+  border-color: #36bfff;
+}
+
+
+/* Form buttons */
+
+.note-form-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+.note-form-buttons button {
+  height: 38px;
+
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
+
+.note-form-buttons button[type="submit"] {
+  background-color: #36bfff;
+
+  color: #ffffff;
+}
+
+.note-form-buttons button[type="submit"]:hover {
+  background-color: #22b5f5;
+}
+
+.note-form-buttons button[type="button"] {
+  background-color: #f3f4f6;
+
+  color: #374151;
+}
+
+.note-form-buttons button[type="button"]:hover {
+  background-color: #e5e7eb;
+}
+
+
+/* =====================================================
+   SEARCH AND FILTER
+===================================================== */
 
 .notes-tools {
+  width: 100%;
+
   display: flex;
+
+  align-items: center;
+
   gap: 10px;
-  margin-bottom: 15px;
+
+  margin-bottom: 18px;
 }
 
 .notes-tools input {
   flex: 1;
+
+  min-width: 0;
+
   height: 40px;
+
   padding: 0 13px;
+
   border: 1px solid #d1d5db;
   border-radius: 6px;
+
   outline: none;
+
+  background-color: #ffffff;
+
+  color: #374151;
+
   font-size: 13px;
+
   box-sizing: border-box;
+}
+
+.notes-tools input::placeholder {
+  color: #9ca3af;
 }
 
 .notes-tools input:focus {
@@ -882,114 +1095,347 @@ body {
 }
 
 .notes-tools select {
-  width: 150px;
+  width: 160px;
+
+  flex-shrink: 0;
+
   height: 40px;
+
   padding: 0 10px;
+
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  background-color: white;
+
   outline: none;
-  font-size: 13px;
-  color: #374151;
-}
 
-
-/* Notes Grid */
-
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
-
-
-/* Note Card */
-
-.note-card {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 18px;
+
+  color: #374151;
+
+  font-size: 13px;
+
   box-sizing: border-box;
-  min-height: 210px;
-}
 
-
-/* Card Top */
-
-.note-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-
-/* Subject */
-
-.note-subject {
-  display: inline-block;
-  padding: 5px 9px;
-  background-color: #eaf8ff;
-  color: #159bd1;
-  border-radius: 5px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-
-/* Three Dot Button */
-
-.note-menu {
-  border: none;
-  background: none;
-  font-size: 20px;
-  color: #6b7280;
   cursor: pointer;
 }
 
+.notes-tools select:focus {
+  border-color: #36bfff;
+}
 
-/* Note Title */
+
+/* =====================================================
+   NOTES GRID
+===================================================== */
+
+.notes-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+
+  align-items: stretch;
+}
+
+
+/* =====================================================
+   NOTE CARD
+===================================================== */
+
+.note-card {
+  min-width: 0;
+  min-height: 210px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  padding: 18px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   NOTE CARD TOP
+===================================================== */
+
+.note-card-top {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 14px;
+}
+
+
+/* =====================================================
+   NOTE SUBJECT
+===================================================== */
+
+.note-subject {
+  display: inline-flex;
+
+  align-items: center;
+
+  max-width: 75%;
+
+  padding: 5px 9px;
+
+  background-color: #eaf8ff;
+
+  color: #159bd1;
+
+  border-radius: 5px;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   DELETE BUTTON
+===================================================== */
+
+.note-menu {
+  flex-shrink: 0;
+
+  min-width: 0;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #6b7280;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.note-menu:hover {
+  color: #ef4444;
+}
+
+
+/* =====================================================
+   NOTE TITLE
+===================================================== */
 
 .note-card h3 {
   margin: 0 0 8px;
+
   font-size: 17px;
+  font-weight: 600;
+
   color: #1f2937;
+
+  line-height: 1.3;
+
+  word-break: break-word;
 }
 
 
-/* Note Description */
+/* =====================================================
+   NOTE CONTENT
+===================================================== */
 
 .note-card p {
   margin: 0;
+
   color: #6b7280;
+
   font-size: 13px;
+
   line-height: 1.5;
+
+  word-break: break-word;
 }
 
 
-/* Card Bottom */
+/* =====================================================
+   NOTE CARD BOTTOM
+===================================================== */
 
 .note-card-bottom {
   display: flex;
+
   justify-content: space-between;
   align-items: center;
-  margin-top: 25px;
+
+  gap: 10px;
+
+  margin-top: auto;
+
   padding-top: 12px;
+
   border-top: 1px solid #f0f0f0;
 }
 
 .note-card-bottom span {
-  font-size: 11px;
+  min-width: 0;
+
   color: #9ca3af;
+
+  font-size: 11px;
+
+  white-space: nowrap;
 }
 
 .note-card-bottom button {
+  flex-shrink: 0;
+
+  padding: 0;
+
   border: none;
-  background: none;
+
+  background: transparent;
+
   color: #36bfff;
+
   font-size: 12px;
+
   cursor: pointer;
+}
+
+.note-card-bottom button:hover {
+  text-decoration: underline;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.no-notes {
+  grid-column: 1 / -1;
+
+  width: 100%;
+
+  margin: 0;
+
+  padding: 40px 20px;
+
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+
+  background-color: #ffffff;
+
+  text-align: center;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   NOTE FORM RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+  .notes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .notes-page {
+    margin-left: 190px;
+
+    width: calc(100% - 190px);
+
+    padding: 18px 15px 25px;
+  }
+
+  .notes-page-header {
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .notes-tools {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .notes-tools input {
+    width: 100%;
+  }
+
+  .notes-tools select {
+    width: 100%;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 500px) {
+
+  .notes-page {
+    margin-left: 70px;
+
+    width: calc(100% - 70px);
+
+    padding: 15px 12px 20px;
+  }
+
+  .notes-page-header {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .add-note-button {
+    width: 100%;
+  }
+
+  .note-form {
+    padding: 15px;
+  }
+
+  .note-card {
+    padding: 15px;
+  }
+
 }
 
 /* ============================= */
@@ -2100,4 +2546,72 @@ body {
   font-size: 10px;
 
   color: #9ca3af;
+}
+
+/* =========================================
+   GLOBAL APP LAYOUT FIX
+   Keep every page below the fixed header
+   and beside the fixed sidebar
+========================================= */
+
+.dashboard,
+.ai-page,
+.notes-page,
+.planner-page,
+.timer-page,
+.profile-page,
+.settings-page {
+  margin-left: 240px;
+  margin-top: 60px;
+  width: calc(100% - 240px);
+  min-height: calc(100vh - 60px);
+  box-sizing: border-box;
+}
+
+
+/* Dashboard */
+.dashboard {
+  padding: 30px;
+}
+
+
+/* AI Assistant */
+.ai-page {
+  height: calc(100vh - 60px);
+}
+
+
+/* Notes */
+.notes-page {
+  height: calc(100vh - 60px);
+}
+
+
+/* Study Planner */
+.planner-page {
+  height: calc(100vh - 60px);
+}
+
+
+/* Study Timer */
+.timer-page {
+  height: calc(100vh - 60px);
+}
+
+
+/* Profile */
+.profile-page {
+  height: calc(100vh - 60px);
+}
+
+
+/* Settings */
+.settings-page {
+  height: calc(100vh - 60px);
+}
+
+
+/* Prevent horizontal overflow */
+body {
+  overflow-x: hidden;
 }
