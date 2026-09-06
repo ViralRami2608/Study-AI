@@ -1046,6 +1046,68 @@ body {
   background-color: #e5e7eb;
 }
 
+/* ============================= */
+/* NOTE PDF ATTACHMENT */
+/* ============================= */
+
+.note-file-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-file-section label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.note-file-section input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.selected-file {
+  margin: 0;
+  font-size: 12px;
+  color: #159bd1;
+}
+
+.note-attachment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f0f8ff;
+  border: 1px solid #dbeeff;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.note-attachment span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-attachment a {
+  color: #159bd1;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.note-attachment a:hover {
+  text-decoration: underline;
+}
+
 
 /* =====================================================
    SEARCH AND FILTER

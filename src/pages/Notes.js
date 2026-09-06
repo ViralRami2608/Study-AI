@@ -9,6 +9,7 @@ function Notes() {
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
+  const [attachment, setAttachment] = useState(null);
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
@@ -41,17 +42,47 @@ function Notes() {
     setTitle("");
     setSubject("");
     setContent("");
+    setAttachment(null);
     setShowForm(true);
+  }
+
+  function handleFileChange(e) {
+    const selectedFile = e.target.files[0];
+
+    if (!selectedFile) {
+      setAttachment(null);
+      return;
+    }
+
+    if (selectedFile.type !== "application/pdf") {
+      alert("Please select a PDF file only.");
+      e.target.value = "";
+      setAttachment(null);
+      return;
+    }
+
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      alert("PDF file size cannot exceed 10 MB.");
+      e.target.value = "";
+      setAttachment(null);
+      return;
+    }
+
+    setAttachment(selectedFile);
   }
 
   async function handleSaveNote(e) {
     e.preventDefault();
 
-    const noteData = {
-      title: title,
-      subject: subject,
-      content: content
-    };
+    const formData = new FormData();
+
+    formData.append("title", title);
+    formData.append("subject", subject);
+    formData.append("content", content);
+
+    if (attachment) {
+      formData.append("attachment", attachment);
+    }
 
     try {
       let response;
@@ -61,10 +92,7 @@ function Notes() {
           "http://localhost:5000/api/notes/" + editingId,
           {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(noteData)
+            body: formData
           }
         );
       } else {
@@ -72,16 +100,17 @@ function Notes() {
           "http://localhost:5000/api/notes",
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(noteData)
+            body: formData
           }
         );
       }
 
       if (!response.ok) {
-        throw new Error("Failed to save note");
+        const errorData = await response.json().catch(() => null);
+
+        throw new Error(
+          errorData?.message || "Failed to save note"
+        );
       }
 
       setShowForm(false);
@@ -89,11 +118,14 @@ function Notes() {
       setTitle("");
       setSubject("");
       setContent("");
+      setAttachment(null);
 
       fetchNotes();
     } catch (error) {
       console.error("Error saving note:", error);
-      alert("Could not save note. Check that the backend is running.");
+      alert(
+        "Could not save note. Check that the backend is running."
+      );
     }
   }
 
@@ -102,6 +134,7 @@ function Notes() {
     setTitle(note.title || "");
     setSubject(note.subject || "");
     setContent(note.content || "");
+    setAttachment(null);
     setShowForm(true);
   }
 
@@ -132,6 +165,26 @@ function Notes() {
       alert("Could not delete note.");
     }
   }
+
+  /*
+   * Create a dynamic list of subjects
+   * from the notes saved in MongoDB.
+   *
+   * Set removes duplicate subjects.
+   */
+  const subjects = Array.from(
+    new Set(
+      notes
+        .map(function (note) {
+          return (note.subject || "").trim();
+        })
+        .filter(function (subjectName) {
+          return subjectName !== "";
+        })
+    )
+  ).sort(function (a, b) {
+    return a.localeCompare(b);
+  });
 
   const filteredNotes = notes.filter(function (note) {
     const noteTitle = note.title || "";
@@ -200,6 +253,31 @@ function Notes() {
               required
             />
 
+            <div className="note-file-section">
+              <label htmlFor="note-attachment">
+                Study Material (PDF)
+              </label>
+
+              <input
+                id="note-attachment"
+                type="file"
+                accept="application/pdf,.pdf"
+                onChange={handleFileChange}
+              />
+
+              {attachment && (
+                <p className="selected-file">
+                  Selected: {attachment.name}
+                </p>
+              )}
+
+              {editingId && !attachment && (
+                <p className="selected-file">
+                  Leave empty to keep the existing PDF.
+                </p>
+              )}
+            </div>
+
             <div className="note-form-buttons">
               <button type="submit">
                 {editingId ? "Update Note" : "Save Note"}
@@ -229,10 +307,17 @@ function Notes() {
           onChange={(e) => setSubjectFilter(e.target.value)}
         >
           <option value="all">All Subjects</option>
-          <option value="dbms">DBMS</option>
-          <option value="java">Java</option>
-          <option value="javascript">JavaScript</option>
-          <option value="dsa">DSA</option>
+
+          {subjects.map(function (subjectName) {
+            return (
+              <option
+                key={subjectName}
+                value={subjectName}
+              >
+                {subjectName}
+              </option>
+            );
+          })}
         </select>
       </div>
 
@@ -245,6 +330,7 @@ function Notes() {
           filteredNotes.map(function (note) {
             return (
               <div className="note-card" key={note._id}>
+
                 <div className="note-card-top">
                   <span className="note-subject">
                     {note.subject || "No Subject"}
@@ -262,18 +348,40 @@ function Notes() {
 
                 <p>{note.content || "No content"}</p>
 
+                {note.attachment &&
+                  note.attachment.fileUrl && (
+                    <div className="note-attachment">
+                      <span>
+                        📄 {note.attachment.fileName}
+                      </span>
+
+                      <a
+                        href={note.attachment.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open PDF
+                      </a>
+                    </div>
+                  )}
+
                 <div className="note-card-bottom">
                   <span>
                     {note.updatedAt
                       ? "Updated: " +
-                        new Date(note.updatedAt).toLocaleDateString()
+                        new Date(
+                          note.updatedAt
+                        ).toLocaleDateString()
                       : "Recently updated"}
                   </span>
 
-                  <button onClick={() => handleEditNote(note)}>
+                  <button
+                    onClick={() => handleEditNote(note)}
+                  >
                     Edit
                   </button>
                 </div>
+
               </div>
             );
           })
