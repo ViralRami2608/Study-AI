@@ -3,10 +3,12 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Dashboard from "./pages/Dashboard";
 import AIAssistant from "./pages/AIAssistant";
@@ -15,20 +17,39 @@ import StudyPlanner from "./pages/StudyPlanner";
 import StudyTimer from "./pages/StudyTimer";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
+function AppLayout() {
+  const location = useLocation();
 
-function App() {
+  const isAuthPage =
+    location.pathname === "/login" ||
+    location.pathname === "/register";
+
   return (
-    <BrowserRouter>
-
-      <Sidebar />
-
-      <Header />
+    <>
+      {!isAuthPage && <Sidebar />}
+      {!isAuthPage && <Header />}
 
       <Routes>
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-        {/* Default Route */}
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
+        {/* Public Dashboard */}
+        <Route
+          path="/dashboard"
+          element={<Dashboard />}
+        />
+
+        {/* Default page */}
         <Route
           path="/"
           element={
@@ -39,64 +60,69 @@ function App() {
           }
         />
 
-
-        {/* Dashboard */}
-
+        {/* Protected pages */}
         <Route
-          path="/dashboard"
-          element={<Dashboard />}
+          path="/notes"
+          element={
+            <ProtectedRoute>
+              <Notes />
+            </ProtectedRoute>
+          }
         />
-
-
-        {/* AI Assistant */}
 
         <Route
           path="/ai-assistant"
-          element={<AIAssistant />}
+          element={
+            <ProtectedRoute>
+              <AIAssistant />
+            </ProtectedRoute>
+          }
         />
-
-
-        {/* Notes */}
-
-        <Route
-          path="/notes"
-          element={<Notes />}
-        />
-
-
-        {/* Study Planner */}
 
         <Route
           path="/study-planner"
-          element={<StudyPlanner />}
+          element={
+            <ProtectedRoute>
+              <StudyPlanner />
+            </ProtectedRoute>
+          }
         />
-
-
-        {/* Study Timer */}
 
         <Route
           path="/study-timer"
-          element={<StudyTimer />}
+          element={
+            <ProtectedRoute>
+              <StudyTimer />
+            </ProtectedRoute>
+          }
         />
-
-
-        {/* Profile */}
 
         <Route
           path="/profile"
-          element={<Profile />}
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
         />
-
-
-        {/* Settings */}
 
         <Route
           path="/settings"
-          element={<Settings />}
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
         />
-
       </Routes>
+    </>
+  );
+}
 
+function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
     </BrowserRouter>
   );
 }

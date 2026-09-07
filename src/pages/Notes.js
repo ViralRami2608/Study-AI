@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Notes() {
+  const navigate = useNavigate();
+
   const [notes, setNotes] = useState([]);
   const [search, setSearch] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("all");
@@ -16,9 +19,44 @@ function Notes() {
     fetchNotes();
   }, []);
 
+  function getToken() {
+    return localStorage.getItem("token");
+  }
+
+  function handleUnauthorized() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    alert("Your session has expired. Please login again.");
+
+    navigate("/login");
+  }
+
   async function fetchNotes() {
+    const token = getToken();
+
+    console.log("Token available:", !!token);
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/api/notes");
+      const response = await fetch(
+        "http://localhost:5000/api/notes",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }
+      );
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Backend request failed");
@@ -74,6 +112,13 @@ function Notes() {
   async function handleSaveNote(e) {
     e.preventDefault();
 
+    const token = getToken();
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     const formData = new FormData();
 
     formData.append("title", title);
@@ -92,6 +137,9 @@ function Notes() {
           "http://localhost:5000/api/notes/" + editingId,
           {
             method: "PUT",
+            headers: {
+              Authorization: "Bearer " + token
+            },
             body: formData
           }
         );
@@ -100,16 +148,24 @@ function Notes() {
           "http://localhost:5000/api/notes",
           {
             method: "POST",
+            headers: {
+              Authorization: "Bearer " + token
+            },
             body: formData
           }
         );
       }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
         throw new Error(
-          errorData?.message || "Failed to save note"
+          data?.message || "Failed to save note"
         );
       }
 
@@ -123,8 +179,10 @@ function Notes() {
       fetchNotes();
     } catch (error) {
       console.error("Error saving note:", error);
+
       alert(
-        "Could not save note. Check that the backend is running."
+        error.message ||
+          "Could not save note."
       );
     }
   }
@@ -147,13 +205,28 @@ function Notes() {
       return;
     }
 
+    const token = getToken();
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     try {
       const response = await fetch(
         "http://localhost:5000/api/notes/" + id,
         {
-          method: "DELETE"
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token
+          }
         }
       );
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Failed to delete note");
@@ -166,12 +239,6 @@ function Notes() {
     }
   }
 
-  /*
-   * Create a dynamic list of subjects
-   * from the notes saved in MongoDB.
-   *
-   * Set removes duplicate subjects.
-   */
   const subjects = Array.from(
     new Set(
       notes
@@ -192,13 +259,20 @@ function Notes() {
     const noteSubject = note.subject || "";
 
     const matchesSearch =
-      noteTitle.toLowerCase().includes(search.toLowerCase()) ||
-      noteContent.toLowerCase().includes(search.toLowerCase()) ||
-      noteSubject.toLowerCase().includes(search.toLowerCase());
+      noteTitle
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
+      noteContent
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
+      noteSubject
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
     const matchesSubject =
       subjectFilter === "all" ||
-      noteSubject.toLowerCase() === subjectFilter.toLowerCase();
+      noteSubject.toLowerCase() ===
+        subjectFilter.toLowerCase();
 
     return matchesSearch && matchesSubject;
   });
@@ -227,14 +301,18 @@ function Notes() {
             onSubmit={handleSaveNote}
           >
             <h2>
-              {editingId ? "Edit Note" : "Create New Note"}
+              {editingId
+                ? "Edit Note"
+                : "Create New Note"}
             </h2>
 
             <input
               type="text"
               placeholder="Note title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
               required
             />
 
@@ -242,14 +320,18 @@ function Notes() {
               type="text"
               placeholder="Enter subject name"
               value={subject}
-              onChange={(e) => setSubject(e.target.value)}
+              onChange={(e) =>
+                setSubject(e.target.value)
+              }
               required
             />
 
             <textarea
               placeholder="Write your note..."
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) =>
+                setContent(e.target.value)
+              }
               required
             />
 
@@ -280,12 +362,16 @@ function Notes() {
 
             <div className="note-form-buttons">
               <button type="submit">
-                {editingId ? "Update Note" : "Save Note"}
+                {editingId
+                  ? "Update Note"
+                  : "Save Note"}
               </button>
 
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={() =>
+                  setShowForm(false)
+                }
               >
                 Cancel
               </button>
@@ -299,14 +385,20 @@ function Notes() {
           type="text"
           placeholder="Search your notes..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
         />
 
         <select
           value={subjectFilter}
-          onChange={(e) => setSubjectFilter(e.target.value)}
+          onChange={(e) =>
+            setSubjectFilter(e.target.value)
+          }
         >
-          <option value="all">All Subjects</option>
+          <option value="all">
+            All Subjects
+          </option>
 
           {subjects.map(function (subjectName) {
             return (
@@ -324,44 +416,64 @@ function Notes() {
       <div className="notes-grid">
         {filteredNotes.length === 0 ? (
           <p className="no-notes">
-            No notes found. Click "+ Add Note" to create your first note.
+            No notes found. Click "+ Add Note"
+            to create your first note.
           </p>
         ) : (
           filteredNotes.map(function (note) {
             return (
-              <div className="note-card" key={note._id}>
+              <div
+                className="note-card"
+                key={note._id}
+              >
 
                 <div className="note-card-top">
                   <span className="note-subject">
-                    {note.subject || "No Subject"}
+                    {note.subject ||
+                      "No Subject"}
                   </span>
 
                   <button
                     className="note-menu"
-                    onClick={() => handleDeleteNote(note._id)}
+                    onClick={() =>
+                      handleDeleteNote(
+                        note._id
+                      )
+                    }
                   >
                     Delete
                   </button>
                 </div>
 
-                <h3>{note.title || "Untitled Note"}</h3>
+                <h3>
+                  {note.title ||
+                    "Untitled Note"}
+                </h3>
 
-                <p>{note.content || "No content"}</p>
+                <p>
+                  {note.content ||
+                    "No content"}
+                </p>
 
                 {note.attachment &&
                   note.attachment.fileUrl && (
                     <div className="note-attachment">
+
                       <span>
-                        📄 {note.attachment.fileName}
+                        📄{" "}
+                        {note.attachment.fileName}
                       </span>
 
                       <a
-                        href={note.attachment.fileUrl}
+                        href={
+                          note.attachment.fileUrl
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         Open PDF
                       </a>
+
                     </div>
                   )}
 
@@ -376,7 +488,9 @@ function Notes() {
                   </span>
 
                   <button
-                    onClick={() => handleEditNote(note)}
+                    onClick={() =>
+                      handleEditNote(note)
+                    }
                   >
                     Edit
                   </button>

@@ -3,24 +3,32 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const connectDB = require("./config/db");
 const Note = require("./models/Note");
 const User = require("./models/User");
-const bcrypt = require("bcryptjs");
+const StudyPlan = require("./models/StudyPlan");
+const authenticateToken = require("./middleware/auth");
 
 dotenv.config();
 
 connectDB();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+// =========================================
+// MIDDLEWARE
+// =========================================
 
 app.use(cors());
 app.use(express.json());
 
-/* =========================================
-   PDF UPLOAD CONFIGURATION
-========================================= */
+// =========================================
+// FILE UPLOAD SETUP
+// =========================================
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,7 +39,7 @@ const storage = multer.diskStorage({
         const uniqueName =
             Date.now() +
             "-" +
-            Math.round(Math.random() * 1e9) +
+            Math.round(Math.random() * 1E9) +
             path.extname(file.originalname);
 
         cb(null, uniqueName);
@@ -54,146 +62,24 @@ const upload = multer({
     }
 });
 
-/* =========================================
-   SERVE UPLOADED FILES
-========================================= */
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "uploads"))
+);
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-/* =========================================
-   HOME ROUTE
-========================================= */
+// =========================================
+// HOME ROUTE
+// =========================================
 
 app.get("/", (req, res) => {
-    res.send("StudyAI Backend is Running!");
+    res.json({
+        message: "StudyAI Backend is running successfully!"
+    });
 });
 
-/* =========================================
-   GET ALL NOTES
-========================================= */
-
-app.get("/api/notes", async (req, res) => {
-    try {
-        const notes = await Note.find().sort({ createdAt: -1 });
-
-        res.status(200).json(notes);
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to fetch notes",
-            error: error.message
-        });
-    }
-});
-
-/* =========================================
-   CREATE NOTE + OPTIONAL PDF
-========================================= */
-
-app.post("/api/notes", upload.single("attachment"), async (req, res) => {
-    try {
-        const { title, subject, content } = req.body;
-
-        const noteData = {
-            title,
-            subject,
-            content
-        };
-
-        if (req.file) {
-            noteData.attachment = {
-                fileName: req.file.originalname,
-                fileUrl: `http://localhost:${process.env.PORT || 5000}/uploads/${req.file.filename}`,
-                fileType: req.file.mimetype,
-                fileSize: req.file.size
-            };
-        }
-
-        const note = await Note.create(noteData);
-
-        res.status(201).json(note);
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to create note",
-            error: error.message
-        });
-    }
-});
-
-/* =========================================
-   UPDATE NOTE + OPTIONAL NEW PDF
-========================================= */
-
-app.put("/api/notes/:id", upload.single("attachment"), async (req, res) => {
-    try {
-        const { title, subject, content } = req.body;
-
-        const updateData = {
-            title,
-            subject,
-            content
-        };
-
-        if (req.file) {
-            updateData.attachment = {
-                fileName: req.file.originalname,
-                fileUrl: `http://localhost:${process.env.PORT || 5000}/uploads/${req.file.filename}`,
-                fileType: req.file.mimetype,
-                fileSize: req.file.size
-            };
-        }
-
-        const updatedNote = await Note.findByIdAndUpdate(
-            req.params.id,
-            updateData,
-            {
-                new: true,
-                runValidators: true
-            }
-        );
-
-        if (!updatedNote) {
-            return res.status(404).json({
-                message: "Note not found"
-            });
-        }
-
-        res.status(200).json(updatedNote);
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to update note",
-            error: error.message
-        });
-    }
-});
-
-/* =========================================
-   DELETE NOTE
-========================================= */
-
-app.delete("/api/notes/:id", async (req, res) => {
-    try {
-        const deletedNote = await Note.findByIdAndDelete(req.params.id);
-
-        if (!deletedNote) {
-            return res.status(404).json({
-                message: "Note not found"
-            });
-        }
-
-        res.status(200).json({
-            message: "Note deleted successfully"
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to delete note",
-            error: error.message
-        });
-    }
-});
-
-/* =========================================
-   USER REGISTRATION
-========================================= */
+// =========================================
+// USER REGISTER
+// =========================================
 
 app.post("/api/users/register", async (req, res) => {
     try {
@@ -211,10 +97,10 @@ app.post("/api/users/register", async (req, res) => {
             });
         }
 
-        const cleanEmail = email.toLowerCase().trim();
+        const normalizedEmail = email.toLowerCase().trim();
 
         const existingUser = await User.findOne({
-            email: cleanEmail
+            email: normalizedEmail
         });
 
         if (existingUser) {
@@ -223,61 +109,550 @@ app.post("/api/users/register", async (req, res) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(
+            password,
+            10
+        );
 
         const user = await User.create({
             name: name.trim(),
-            email: cleanEmail,
+            email: normalizedEmail,
             password: hashedPassword
         });
 
         res.status(201).json({
-            message: "User registered successfully.",
+            message: "Registration successful.",
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email
             }
         });
+
     } catch (error) {
-        console.error("Registration Error:", error);
+        console.log("Registration Error:", error.message);
 
         res.status(500).json({
-            message: "Failed to register user.",
-            error: error.message
+            message: "Server error during registration."
         });
     }
 });
 
-/* =========================================
-   ERROR HANDLER
-========================================= */
+// =========================================
+// USER LOGIN
+// =========================================
+
+app.post("/api/users/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required."
+            });
+        }
+
+        const normalizedEmail = email.toLowerCase().trim();
+
+        const user = await User.findOne({
+            email: normalizedEmail
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                message: "Invalid email or password."
+            });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        if (!isPasswordCorrect) {
+            return res.status(401).json({
+                message: "Invalid email or password."
+            });
+        }
+
+        const token = jwt.sign(
+            {
+                userId: user._id,
+                email: user.email
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "7d"
+            }
+        );
+
+        res.status(200).json({
+            message: "Login successful.",
+
+            token,
+
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                profileImage: user.profileImage
+            }
+        });
+
+    } catch (error) {
+        console.log("Login Error:", error.message);
+
+        res.status(500).json({
+            message: "Server error during login."
+        });
+    }
+});
+
+// =========================================
+// USER PROFILE
+// =========================================
+
+app.get(
+    "/api/users/profile",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const user = await User.findById(
+                req.user.userId
+            ).select("-password");
+
+            if (!user) {
+                return res.status(404).json({
+                    message: "User not found."
+                });
+            }
+
+            res.status(200).json(user);
+
+        } catch (error) {
+            console.log("Profile Error:", error.message);
+
+            res.status(500).json({
+                message: "Server error."
+            });
+        }
+    }
+);
+
+// =========================================
+// NOTES - GET ALL
+// =========================================
+
+app.get(
+    "/api/notes",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const notes = await Note.find({
+                userId: req.user.userId
+            }).sort({
+                createdAt: -1
+            });
+
+            res.status(200).json(notes);
+
+        } catch (error) {
+            console.log("Get Notes Error:", error.message);
+
+            res.status(500).json({
+                message: "Failed to fetch notes."
+            });
+        }
+    }
+);
+
+// =========================================
+// NOTES - CREATE
+// =========================================
+
+app.post(
+    "/api/notes",
+    authenticateToken,
+    upload.single("attachment"),
+    async (req, res) => {
+        try {
+            const {
+                title,
+                subject,
+                content
+            } = req.body;
+
+            if (!title || !subject || !content) {
+                return res.status(400).json({
+                    message:
+                        "Title, subject and content are required."
+                });
+            }
+
+            const noteData = {
+                userId: req.user.userId,
+                title,
+                subject,
+                content
+            };
+
+            if (req.file) {
+                noteData.attachment = {
+                    fileName: req.file.originalname,
+                    fileUrl:
+                        `/uploads/${req.file.filename}`,
+                    fileType: req.file.mimetype,
+                    fileSize: req.file.size
+                };
+            }
+
+            const note = await Note.create(noteData);
+
+            res.status(201).json({
+                message: "Note created successfully.",
+                note
+            });
+
+        } catch (error) {
+            console.log("Create Note Error:", error.message);
+
+            res.status(500).json({
+                message: "Failed to create note."
+            });
+        }
+    }
+);
+
+// =========================================
+// NOTES - UPDATE
+// =========================================
+
+app.put(
+    "/api/notes/:id",
+    authenticateToken,
+    upload.single("attachment"),
+    async (req, res) => {
+        try {
+            const {
+                title,
+                subject,
+                content
+            } = req.body;
+
+            const updateData = {
+                title,
+                subject,
+                content
+            };
+
+            if (req.file) {
+                updateData.attachment = {
+                    fileName: req.file.originalname,
+                    fileUrl:
+                        `/uploads/${req.file.filename}`,
+                    fileType: req.file.mimetype,
+                    fileSize: req.file.size
+                };
+            }
+
+            const note =
+                await Note.findOneAndUpdate(
+                    {
+                        _id: req.params.id,
+                        userId: req.user.userId
+                    },
+                    updateData,
+                    {
+                        new: true,
+                        runValidators: true
+                    }
+                );
+
+            if (!note) {
+                return res.status(404).json({
+                    message: "Note not found."
+                });
+            }
+
+            res.status(200).json({
+                message: "Note updated successfully.",
+                note
+            });
+
+        } catch (error) {
+            console.log("Update Note Error:", error.message);
+
+            res.status(500).json({
+                message: "Failed to update note."
+            });
+        }
+    }
+);
+
+// =========================================
+// NOTES - DELETE
+// =========================================
+
+app.delete(
+    "/api/notes/:id",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const note =
+                await Note.findOneAndDelete({
+                    _id: req.params.id,
+                    userId: req.user.userId
+                });
+
+            if (!note) {
+                return res.status(404).json({
+                    message: "Note not found."
+                });
+            }
+
+            res.status(200).json({
+                message: "Note deleted successfully."
+            });
+
+        } catch (error) {
+            console.log("Delete Note Error:", error.message);
+
+            res.status(500).json({
+                message: "Failed to delete note."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY PLANNER - GET ALL
+// =========================================
+
+app.get(
+    "/api/study-plans",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const plans = await StudyPlan.find({
+                userId: req.user.userId
+            }).sort({
+                date: 1,
+                startTime: 1
+            });
+
+            res.status(200).json(plans);
+
+        } catch (error) {
+            console.log(
+                "Get Study Plans Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message: "Failed to fetch study plans."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY PLANNER - CREATE
+// =========================================
+
+app.post(
+    "/api/study-plans",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const {
+                subject,
+                task,
+                date,
+                startTime,
+                endTime,
+                status
+            } = req.body;
+
+            if (
+                !subject ||
+                !task ||
+                !date ||
+                !startTime ||
+                !endTime
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Subject, task, date, start time and end time are required."
+                });
+            }
+
+            const studyPlan = await StudyPlan.create({
+                userId: req.user.userId,
+                subject,
+                task,
+                date,
+                startTime,
+                endTime,
+                status: status || "Pending"
+            });
+
+            res.status(201).json({
+                message:
+                    "Study plan created successfully.",
+                studyPlan
+            });
+
+        } catch (error) {
+            console.log(
+                "Create Study Plan Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message: "Failed to create study plan."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY PLANNER - UPDATE
+// =========================================
+
+app.put(
+    "/api/study-plans/:id",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const {
+                subject,
+                task,
+                date,
+                startTime,
+                endTime,
+                status
+            } = req.body;
+
+            const studyPlan =
+                await StudyPlan.findOneAndUpdate(
+                    {
+                        _id: req.params.id,
+                        userId: req.user.userId
+                    },
+                    {
+                        subject,
+                        task,
+                        date,
+                        startTime,
+                        endTime,
+                        status
+                    },
+                    {
+                        new: true,
+                        runValidators: true
+                    }
+                );
+
+            if (!studyPlan) {
+                return res.status(404).json({
+                    message: "Study plan not found."
+                });
+            }
+
+            res.status(200).json({
+                message:
+                    "Study plan updated successfully.",
+                studyPlan
+            });
+
+        } catch (error) {
+            console.log(
+                "Update Study Plan Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message: "Failed to update study plan."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY PLANNER - DELETE
+// =========================================
+
+app.delete(
+    "/api/study-plans/:id",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const studyPlan =
+                await StudyPlan.findOneAndDelete({
+                    _id: req.params.id,
+                    userId: req.user.userId
+                });
+
+            if (!studyPlan) {
+                return res.status(404).json({
+                    message: "Study plan not found."
+                });
+            }
+
+            res.status(200).json({
+                message:
+                    "Study plan deleted successfully."
+            });
+
+        } catch (error) {
+            console.log(
+                "Delete Study Plan Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message: "Failed to delete study plan."
+            });
+        }
+    }
+);
+
+// =========================================
+// ERROR HANDLER
+// =========================================
 
 app.use((error, req, res, next) => {
-    if (error.message === "Only PDF files are allowed.") {
+    if (
+        error.message ===
+        "Only PDF files are allowed."
+    ) {
         return res.status(400).json({
             message: error.message
         });
     }
 
-    if (error.code === "LIMIT_FILE_SIZE") {
+    if (
+        error instanceof multer.MulterError &&
+        error.code === "LIMIT_FILE_SIZE"
+    ) {
         return res.status(400).json({
-            message: "PDF file size cannot exceed 10 MB."
+            message: "PDF file must be 10MB or smaller."
         });
     }
 
+    console.log("Server Error:", error.message);
+
     res.status(500).json({
-        message: "Server error",
-        error: error.message
+        message: "Something went wrong."
     });
 });
 
-/* =========================================
-   START SERVER
-========================================= */
-
-const PORT = process.env.PORT || 5000;
+// =========================================
+// START SERVER
+// =========================================
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(
+        `StudyAI Backend running on http://localhost:${PORT}`
+    );
 });
