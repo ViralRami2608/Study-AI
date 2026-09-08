@@ -968,6 +968,56 @@ body {
   text-decoration: underline;
 }
 
+/* =========================================
+   DASHBOARD STUDY PROGRESS
+========================================= */
+
+.dashboard-study-progress {
+  margin-bottom: 24px;
+}
+
+.study-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.study-progress-card {
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.study-progress-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.study-progress-card strong {
+  display: block;
+  color: #1e293b;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .study-progress-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .study-progress-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ============================= */
 /* TASKS */
 /* ============================= */
@@ -1759,356 +1809,1089 @@ body {
   }
 }
 
-/* ============================= */
-/* STUDY PLANNER PAGE */
-/* ============================= */
+/* =========================================
+   STUDY PLANNER
+========================================= */
+
 .planner-page {
-  margin-left: 240px;
-  margin-top: 60px;
-  height: calc(100vh - 60px);
-  padding: 18px 25px;
+  min-height: 100vh;
+  margin-left: 0;
+  padding: 20px 24px 32px;
+  background-color: #f4f9fd;
   box-sizing: border-box;
-  background-color: #f8fbff;
-  overflow: hidden;
-}
-
-/* Header */
-.planner-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.planner-header h1 {
-  margin: 0 0 4px;
-  font-size: 23px;
-  color: #1f2937;
-}
-
-.planner-header p {
-  margin: 0;
-  font-size: 13px;
-  color: #6b7280;
-}
-
-/* Add Button */
-.planner-add-button {
-  padding: 10px 16px;
   border: none;
-  border-radius: 6px;
-  background-color: #36bfff;
-  color: #ffffff;
-  font-size: 13px;
-  cursor: pointer;
 }
 
-/* Summary */
-.planner-summary {
+/* =========================================
+   HEADER
+========================================= */
+
+.planner-page .planner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.planner-page .planner-header h1 {
+  margin: 0 0 5px;
+  color: #1e293b;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.planner-page .planner-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* =========================================
+   ADD TASK BUTTON
+========================================= */
+
+.planner-page .planner-add-button {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.planner-page .planner-add-button:hover {
+  background-color: #1d4ed8;
+}
+
+.planner-page .planner-add-button:active {
+  transform: scale(0.98);
+}
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.planner-page .planner-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 20px;
+  margin-bottom: 28px;
 }
 
-.planner-summary-card {
+.planner-page .planner-summary-card {
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 14px 18px;
   box-sizing: border-box;
 }
 
-.planner-summary-card span {
+.planner-page .planner-summary-card span {
   display: block;
-  margin-bottom: 5px;
-  font-size: 12px;
-  color: #6b7280;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 14px;
 }
 
-.planner-summary-card strong {
-  font-size: 22px;
-  color: #1f2937;
+.planner-page .planner-summary-card strong {
+  display: block;
+  color: #1e293b;
+  font-size: 28px;
+  font-weight: 700;
 }
 
-/* Main Section */
-.planner-section {
+/* =========================================
+   ADD / EDIT FORM
+========================================= */
+
+.planner-page .planner-form {
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 18px;
   box-sizing: border-box;
 }
 
-/* Section Header */
-.planner-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+.planner-page .planner-form h2 {
+  margin: 0 0 20px;
+  color: #1e293b;
+  font-size: 20px;
+  font-weight: 700;
 }
 
-.planner-section-header h2 {
+.planner-page .planner-form form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
   margin: 0;
-  font-size: 17px;
-  color: #1f2937;
+  padding: 0;
 }
 
-.planner-section-header select {
-  height: 34px;
-  padding: 0 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+/* Form field wrapper */
+
+.planner-page .planner-form form > div {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+/* Labels */
+
+.planner-page .planner-form form label {
+  display: block;
+  margin: 0 0 7px;
+  padding: 0;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Inputs */
+
+.planner-page .planner-form form input {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
   background-color: #ffffff;
-  color: #4b5563;
-  font-size: 12px;
+  color: #1e293b;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: 0.2s ease;
+}
+
+/* Select */
+
+.planner-page .planner-form form select {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-size: 14px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: 0.2s ease;
+}
+
+/* Focus */
+
+.planner-page .planner-form form input:focus,
+.planner-page .planner-form form select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* =========================================
+   FORM BUTTONS
+========================================= */
+
+.planner-page .planner-form .planner-form-buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.planner-page .planner-form .planner-form-buttons button {
+  min-width: 110px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Save */
+
+.planner-page .planner-form .planner-form-buttons button[type="submit"] {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.planner-page
+  .planner-form
+  .planner-form-buttons
+  button[type="submit"]:hover {
+  background-color: #1d4ed8;
+}
+
+/* Cancel */
+
+.planner-page
+  .planner-form
+  .planner-form-buttons
+  button[type="button"] {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.planner-page
+  .planner-form
+  .planner-form-buttons
+  button[type="button"]:hover {
+  background-color: #cbd5e1;
+}
+
+/* =========================================
+   TASK SECTION
+========================================= */
+
+.planner-page .planner-section {
+  width: 100%;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.planner-page .planner-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.planner-page .planner-section-header h2 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.planner-page .planner-section-header select {
+  min-width: 140px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #334155;
+  font-size: 14px;
+  cursor: pointer;
   outline: none;
 }
 
-/* Task */
-.planner-task {
+/* =========================================
+   TASK ROW
+========================================= */
+
+.planner-page .planner-task {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 5px;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 14px;
+  min-height: 76px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: 0.2s ease;
 }
 
-.planner-task:last-child {
-  border-bottom: none;
+.planner-page .planner-task:last-child {
+  margin-bottom: 0;
 }
 
-/* Task Check */
-.task-check {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #d1d5db;
+.planner-page .planner-task:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+}
+
+/* =========================================
+   CHECK BUTTON
+========================================= */
+
+.planner-page .task-check {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 2px solid #cbd5e1;
   border-radius: 50%;
+  background-color: #ffffff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  font-size: 11px;
-  color: #ffffff;
-  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.task-check.completed {
-  background-color: #36bfff;
-  border-color: #36bfff;
+.planner-page .task-check:hover {
+  border-color: #2563eb;
 }
 
-/* Task Details */
-.task-details {
+.planner-page .task-check.completed {
+  border-color: #2563eb;
+  background-color: #2563eb;
+}
+
+/* =========================================
+   TASK DETAILS
+========================================= */
+
+.planner-page .task-details {
   flex: 1;
   min-width: 0;
 }
 
-.task-details h3 {
-  margin: 0 0 4px;
-  font-size: 14px;
-  color: #1f2937;
-}
-
-.task-details p {
-  margin: 0;
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-/* Task Status */
-.task-status {
-  padding: 5px 9px;
-  border-radius: 5px;
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
-.completed-status {
-  background-color: #eaf8ff;
-  color: #159bd1;
-}
-
-.pending-status {
-  background-color: #f3f4f6;
-  color: #6b7280;
-}
-
-/* ============================= */
-/* STUDY TIMER PAGE */
-/* ============================= */
-.timer-page {
-  margin-left: 240px;
-  margin-top: 60px;
-  height: calc(100vh - 60px);
-  padding: 18px 25px;
-  box-sizing: border-box;
-  background-color: #f8fbff;
-  overflow: hidden;
-}
-
-/* ============================= */
-/* PAGE HEADER */
-/* ============================= */
-.timer-header {
-  margin-bottom: 12px;
-}
-
-.timer-header h1 {
-  margin: 0 0 4px;
-  font-size: 23px;
-  color: #1f2937;
-}
-
-.timer-header p {
-  margin: 0;
-  font-size: 13px;
-  color: #6b7280;
-}
-
-/* ============================= */
-/* MAIN TIMER BOX */
-/* ============================= */
-.timer-container {
-  height: calc(100% - 60px);
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 20px 30px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-}
-
-/* ============================= */
-/* SUBJECT SELECTION */
-/* ============================= */
-.timer-subject {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.timer-subject label {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.timer-subject select {
-  width: 280px;
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background-color: #ffffff;
-  color: #374151;
-  font-size: 12px;
-  outline: none;
-}
-
-/* ============================= */
-/* TIMER CIRCLE */
-/* ============================= */
-.timer-display {
-  width: 160px;
-  height: 160px;
-  margin: 5px 0 8px;
-  border: 6px solid #36bfff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-.timer-display span {
-  font-size: 36px;
+.planner-page .task-details h3 {
+  margin: 0 0 5px;
+  color: #1e293b;
+  font-size: 15px;
   font-weight: 600;
-  color: #1f2937;
+  overflow-wrap: anywhere;
 }
 
-/* ============================= */
-/* TIMER STATUS */
-/* ============================= */
-.timer-status {
-  margin: 0 0 12px;
+.planner-page .task-details p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* =========================================
+   STATUS
+========================================= */
+
+.planner-page .task-status {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 20px;
   font-size: 12px;
-  color: #6b7280;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-/* ============================= */
-/* TIMER BUTTONS */
-/* ============================= */
-.timer-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 20px;
+.planner-page .completed-status {
+  background-color: #dcfce7;
+  color: #15803d;
 }
 
-.timer-buttons button {
-  height: 36px;
-  min-width: 75px;
-  padding: 0 15px;
-  border-radius: 6px;
+.planner-page .pending-status {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+/* =========================================
+   EDIT BUTTON
+========================================= */
+
+.planner-page .planner-edit-button {
+  flex-shrink: 0;
+  border: 1px solid #bfdbfe;
+  padding: 7px 13px;
+  border-radius: 8px;
+  background-color: #eff6ff;
+  color: #2563eb;
   font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.planner-page .planner-edit-button:hover {
+  border-color: #93c5fd;
+  background-color: #dbeafe;
+}
+
+.planner-page .planner-edit-button:active {
+  transform: scale(0.97);
+}
+
+/* =========================================
+   DELETE BUTTON
+========================================= */
+
+.planner-page .planner-delete-button {
+  flex-shrink: 0;
+  border: 1px solid #fecaca;
+  padding: 7px 13px;
+  border-radius: 8px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.planner-page .planner-delete-button:hover {
+  border-color: #fca5a5;
+  background-color: #fee2e2;
+}
+
+.planner-page .planner-delete-button:active {
+  transform: scale(0.97);
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.planner-page .planner-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+  .planner-page {
+    margin-left: 220px;
+    padding: 95px 28px 28px;
+  }
+
+  .planner-page .planner-task {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 850px) {
+  .planner-page {
+    margin-left: 0;
+    padding: 85px 22px 22px;
+  }
+
+  .planner-page .planner-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-page .planner-form form {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-page .planner-form .planner-form-buttons {
+    grid-column: auto;
+  }
+
+  .planner-page .planner-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .planner-page .planner-add-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .planner-page {
+    padding: 75px 16px 16px;
+  }
+
+  .planner-page .planner-header h1 {
+    font-size: 25px;
+  }
+
+  .planner-page .planner-section,
+  .planner-page .planner-form {
+    padding: 18px;
+  }
+
+  .planner-page .planner-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .planner-page .planner-section-header select {
+    width: 100%;
+  }
+
+  .planner-page .planner-task {
+    align-items: flex-start;
+  }
+
+  .planner-page .task-status {
+    margin-left: 40px;
+  }
+
+  .planner-page .planner-form .planner-form-buttons {
+    flex-direction: column;
+  }
+
+  .planner-page
+    .planner-form
+    .planner-form-buttons
+    button {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   STUDY TIMER
+========================================= */
+
+.timer-page {
+  min-height: 100vh;
+  margin-left: 0;
+  padding: 20px 24px 32px;
+  background-color: #f4f9fd;
   box-sizing: border-box;
 }
 
-.timer-start {
-  border: none;
-  background-color: #36bfff;
-  color: #ffffff;
+/* =========================================
+   HEADER
+========================================= */
+
+.timer-page .timer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 20px;
+  padding: 0;
 }
 
-.timer-pause {
-  border: 1px solid #d1d5db;
-  background-color: #ffffff;
-  color: #374151;
+.timer-page .timer-header h1 {
+  margin: 0 0 5px;
+  color: #1e293b;
+  font-size: 30px;
+  font-weight: 700;
 }
 
-.timer-reset {
-  border: 1px solid #d1d5db;
-  background-color: #ffffff;
-  color: #374151;
+.timer-page .timer-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
 }
 
-/* ============================= */
-/* TODAY'S INFORMATION */
-/* ============================= */
-.timer-info {
+/* =========================================
+   TIMER CONTAINER
+========================================= */
+
+.timer-page .timer-container {
   width: 100%;
-  max-width: 650px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 5px;
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 28px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-sizing: border-box;
 }
 
-.timer-info-card {
-  background-color: #f8fbff;
-  border: 1px solid #e5e7eb;
-  border-radius: 7px;
-  padding: 12px;
+/* =========================================
+   SUBJECT
+========================================= */
+
+.timer-page .timer-subject {
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.timer-page .timer-subject label {
+  display: block;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.timer-page .timer-subject input {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  outline: none;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: 0.2s ease;
+}
+
+.timer-page .timer-subject input::placeholder {
+  color: #94a3b8;
+}
+
+.timer-page .timer-subject input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* =========================================
+   EDITABLE DURATION
+========================================= */
+
+.timer-page .timer-duration {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.timer-page .timer-duration > label {
+  display: block;
+  margin-bottom: 9px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.timer-page .timer-duration-inputs {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.timer-page .timer-duration-inputs > div {
+  display: flex;
+  flex-direction: column;
+  width: 110px;
+}
+
+.timer-page .timer-duration-inputs input {
+  width: 100%;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  outline: none;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-size: 15px;
   text-align: center;
   box-sizing: border-box;
 }
 
-.timer-info-card span {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 11px;
-  color: #6b7280;
+.timer-page .timer-duration-inputs input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.timer-info-card strong {
-  font-size: 17px;
-  color: #1f2937;
+.timer-page .timer-duration-inputs span {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Remove number input arrows where supported */
+
+.timer-page .timer-duration-inputs input::-webkit-inner-spin-button,
+.timer-page .timer-duration-inputs input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* =========================================
+   STUDY HISTORY
+========================================= */
+
+.timer-page .study-history {
+  width: 100%;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+.timer-page .study-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.timer-page .study-history-header h2 {
+  margin: 0 0 4px;
+  color: #1e293b;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.timer-page .study-history-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.timer-page .study-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timer-page .study-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+}
+
+.timer-page .study-history-subject {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.timer-page .study-history-subject strong {
+  margin-bottom: 4px;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.timer-page .study-history-subject span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.timer-page .study-history-time {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.timer-page .study-history-time span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.timer-page .study-history-time strong {
+  min-width: 65px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.timer-page .study-history-empty {
+  padding: 30px 15px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+}
+
+/* =========================================
+   STUDY HISTORY RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+  .timer-page .study-history-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .timer-page .study-history-time {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .timer-page .study-history-time strong {
+    text-align: right;
+  }
+}
+
+.timer-page .timer-end {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.timer-page .timer-end:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.timer-page .timer-end:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   STUDY HISTORY DELETE BUTTON
+========================================= */
+
+.timer-page .study-history-delete {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.timer-page .study-history-delete:hover {
+  border-color: #fca5a5;
+  background-color: #fee2e2;
+}
+
+.timer-page .study-history-delete:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 600px) {
+  .timer-page .study-history-delete {
+    margin-left: 0;
+  }
+}
+
+/* =========================================
+   TIMER DISPLAY
+========================================= */
+
+.timer-page .timer-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 170px;
+  margin: 8px 0 10px;
+}
+
+.timer-page .timer-display span {
+  color: #1e293b;
+  font-size: 68px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   STATUS
+========================================= */
+
+.timer-page .timer-status {
+  margin: 0 0 20px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.timer-page .timer-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.timer-page .timer-buttons button {
+  min-width: 105px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Start */
+
+.timer-page .timer-start {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.timer-page .timer-start:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+/* Pause */
+
+.timer-page .timer-pause {
+  background-color: #f59e0b;
+  color: #ffffff;
+}
+
+.timer-page .timer-pause:hover:not(:disabled) {
+  background-color: #d97706;
+}
+
+/* =========================================
+   END & SAVE BUTTON
+========================================= */
+
+.timer-page .timer-end {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.timer-page .timer-end:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.timer-page .timer-end:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Reset */
+
+.timer-page .timer-reset {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.timer-page .timer-reset:hover {
+  background-color: #cbd5e1;
+}
+
+/* Disabled */
+
+.timer-page .timer-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   STUDY STATISTICS
+========================================= */
+
+.timer-page .timer-info {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+.timer-page .timer-info-card {
+  min-width: 0;
+  padding: 18px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.timer-page .timer-info-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.timer-page .timer-info-card strong {
+  display: block;
+  color: #1e293b;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* =========================================
+   DISABLED INPUTS
+========================================= */
+
+.timer-page .timer-subject input:disabled,
+.timer-page .timer-duration-inputs input:disabled {
+  background-color: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .timer-page {
+    padding: 20px;
+  }
+
+  .timer-page .timer-container {
+    padding: 24px;
+  }
+
+  .timer-page .timer-info {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .timer-page {
+    padding: 16px;
+  }
+
+  .timer-page .timer-header h1 {
+    font-size: 25px;
+  }
+
+  .timer-page .timer-container {
+    padding: 18px;
+  }
+
+  .timer-page .timer-duration-inputs {
+    gap: 8px;
+  }
+
+  .timer-page .timer-duration-inputs > div {
+    width: 90px;
+  }
+
+  .timer-page .timer-display {
+    min-height: 135px;
+  }
+
+  .timer-page .timer-display span {
+    font-size: 48px;
+  }
+
+  .timer-page .timer-buttons {
+    flex-wrap: wrap;
+  }
+
+  .timer-page .timer-buttons button {
+    min-width: 90px;
+  }
+
+  .timer-page .timer-info {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ============================= */

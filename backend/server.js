@@ -10,6 +10,7 @@ const connectDB = require("./config/db");
 const Note = require("./models/Note");
 const User = require("./models/User");
 const StudyPlan = require("./models/StudyPlan");
+const StudySession = require("./models/StudySession");
 const authenticateToken = require("./middleware/auth");
 
 dotenv.config();
@@ -122,6 +123,7 @@ app.post("/api/users/register", async (req, res) => {
 
         res.status(201).json({
             message: "Registration successful.",
+
             user: {
                 id: user._id,
                 name: user.name,
@@ -612,6 +614,406 @@ app.delete(
 
             res.status(500).json({
                 message: "Failed to delete study plan."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY SESSIONS - GET ALL
+// =========================================
+
+app.get(
+    "/api/study-sessions",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const sessions = await StudySession.find({
+                userId: req.user.userId
+            }).sort({
+                startTime: -1
+            });
+
+            res.status(200).json(sessions);
+
+        } catch (error) {
+            console.log(
+                "Get Study Sessions Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message: "Failed to fetch study sessions."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY SESSIONS - CREATE
+// =========================================
+
+app.post(
+    "/api/study-sessions",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const {
+                subject,
+                startTime,
+                endTime,
+                duration
+            } = req.body;
+
+            if (
+                !subject ||
+                !startTime ||
+                !endTime ||
+                duration === undefined
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Subject, start time, end time and duration are required."
+                });
+            }
+
+            if (Number(duration) <= 0) {
+                return res.status(400).json({
+                    message:
+                        "Duration must be greater than 0."
+                });
+            }
+
+            const studySession =
+                await StudySession.create({
+                    userId: req.user.userId,
+                    subject: subject.trim(),
+                    startTime,
+                    endTime,
+                    duration: Number(duration)
+                });
+
+            res.status(201).json({
+                message:
+                    "Study session saved successfully.",
+                studySession
+            });
+
+        } catch (error) {
+            console.log(
+                "Create Study Session Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to save study session."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY SESSION SUMMARY
+// =========================================
+
+app.get(
+    "/api/study-sessions/summary",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const now = new Date();
+
+            // =====================================
+            // TODAY
+            // =====================================
+
+            const startOfToday = new Date(now);
+            startOfToday.setHours(0, 0, 0, 0);
+
+            const endOfToday = new Date(now);
+            endOfToday.setHours(23, 59, 59, 999);
+
+
+            // =====================================
+            // PREVIOUS DAY
+            // =====================================
+
+            const startOfPreviousDay =
+                new Date(startOfToday);
+
+            startOfPreviousDay.setDate(
+                startOfPreviousDay.getDate() - 1
+            );
+
+            const endOfPreviousDay =
+                new Date(startOfToday);
+
+            endOfPreviousDay.setMilliseconds(-1);
+
+
+            // =====================================
+            // THIS WEEK
+            // Monday = first day
+            // =====================================
+
+            const startOfThisWeek =
+                new Date(startOfToday);
+
+            const currentDay =
+                startOfThisWeek.getDay();
+
+            const daysFromMonday =
+                currentDay === 0
+                    ? 6
+                    : currentDay - 1;
+
+            startOfThisWeek.setDate(
+                startOfThisWeek.getDate() -
+                daysFromMonday
+            );
+
+
+            // =====================================
+            // LAST WEEK
+            // =====================================
+
+            const startOfLastWeek =
+                new Date(startOfThisWeek);
+
+            startOfLastWeek.setDate(
+                startOfLastWeek.getDate() - 7
+            );
+
+            const endOfLastWeek =
+                new Date(startOfThisWeek);
+
+            endOfLastWeek.setMilliseconds(-1);
+
+
+            // =====================================
+            // THIS MONTH
+            // =====================================
+
+            const startOfThisMonth =
+                new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    1
+                );
+
+
+            // =====================================
+            // LAST MONTH
+            // =====================================
+
+            const startOfLastMonth =
+                new Date(
+                    now.getFullYear(),
+                    now.getMonth() - 1,
+                    1
+                );
+
+            const endOfLastMonth =
+                new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    1
+                );
+
+            endOfLastMonth.setMilliseconds(-1);
+
+
+            // =====================================
+            // GET USER SESSIONS
+            // =====================================
+
+            const sessions =
+                await StudySession.find({
+                    userId: req.user.userId
+                });
+
+
+            // =====================================
+            // TOTALS
+            // =====================================
+
+            let todaySeconds = 0;
+            let previousDaySeconds = 0;
+            let lastWeekSeconds = 0;
+            let lastMonthSeconds = 0;
+
+
+            sessions.forEach((session) => {
+
+                const sessionDate =
+                    new Date(session.startTime);
+
+                const duration =
+                    Number(session.duration);
+
+
+                // Today
+
+                if (
+                    sessionDate >= startOfToday &&
+                    sessionDate <= endOfToday
+                ) {
+                    todaySeconds += duration;
+                }
+
+
+                // Previous day
+
+                if (
+                    sessionDate >= startOfPreviousDay &&
+                    sessionDate <= endOfPreviousDay
+                ) {
+                    previousDaySeconds += duration;
+                }
+
+
+                // Last week
+
+                if (
+                    sessionDate >= startOfLastWeek &&
+                    sessionDate <= endOfLastWeek
+                ) {
+                    lastWeekSeconds += duration;
+                }
+
+
+                // Last month
+
+                if (
+                    sessionDate >= startOfLastMonth &&
+                    sessionDate <= endOfLastMonth
+                ) {
+                    lastMonthSeconds += duration;
+                }
+
+            });
+
+
+            // =====================================
+            // RESPONSE
+            // =====================================
+
+            res.status(200).json({
+
+                todaySeconds,
+
+                previousDaySeconds,
+
+                lastWeekSeconds,
+
+                lastMonthSeconds
+
+            });
+
+        } catch (error) {
+
+            console.log(
+                "Study Session Summary Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to calculate study summary."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY SESSION - SUBJECT SUMMARY
+// =========================================
+
+app.get(
+    "/api/study-sessions/subjects",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const subjectSummary =
+                await StudySession.aggregate([
+                    {
+                        $match: {
+                            userId: req.user.userId
+                        }
+                    },
+
+                    {
+                        $group: {
+                            _id: "$subject",
+
+                            totalSeconds: {
+                                $sum: "$duration"
+                            }
+                        }
+                    },
+
+                    {
+                        $sort: {
+                            totalSeconds: -1
+                        }
+                    }
+                ]);
+
+            res.status(200).json(
+                subjectSummary
+            );
+
+        } catch (error) {
+            console.log(
+                "Subject Summary Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to calculate subject study time."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY SESSIONS - DELETE
+// =========================================
+
+app.delete(
+    "/api/study-sessions/:id",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const studySession =
+                await StudySession.findOneAndDelete({
+                    _id: req.params.id,
+                    userId: req.user.userId
+                });
+
+            if (!studySession) {
+                return res.status(404).json({
+                    message:
+                        "Study session not found."
+                });
+            }
+
+            res.status(200).json({
+                message:
+                    "Study session deleted successfully."
+            });
+
+        } catch (error) {
+            console.log(
+                "Delete Study Session Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to delete study session."
             });
         }
     }
