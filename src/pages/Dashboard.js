@@ -6,6 +6,8 @@ function Dashboard() {
 
   const [plans, setPlans] = useState([]);
   const [notes, setNotes] = useState([]);
+  const [subjectProgress, setSubjectProgress] = useState([]);
+  const [weeklyStudy, setWeeklyStudy] = useState([]);
 
   const [todayStudy, setTodayStudy] = useState(0);
   const [previousDayStudy, setPreviousDayStudy] = useState(0);
@@ -27,12 +29,36 @@ function Dashboard() {
   const SUMMARY_API =
     "http://localhost:5000/api/study-sessions/summary";
 
+  const SUBJECT_API =
+    "http://localhost:5000/api/study-sessions/subjects";
+
+  const WEEKLY_API =
+    "http://localhost:5000/api/study-sessions/weekly";
+
   // =========================================
   // TOKEN
   // =========================================
 
   const getToken = () => {
     return localStorage.getItem("token");
+  };
+
+  // =========================================
+  // FORMAT STUDY TIME
+  // =========================================
+
+  const formatStudyTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+
+    const minutes = Math.floor(
+      (seconds % 3600) / 60
+    );
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+
+    return `${minutes}m`;
   };
 
   // =========================================
@@ -46,23 +72,26 @@ function Dashboard() {
   };
 
   // =========================================
-  // FORMAT STUDY TIME
+  // TASK TIME
   // =========================================
 
-  const formatStudyTime = (seconds) => {
-    const hours = Math.floor(
-      seconds / 3600
-    );
-
-    const minutes = Math.floor(
-      (seconds % 3600) / 60
-    );
-
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
+  const formatTaskTime = (time) => {
+    if (!time) {
+      return "";
     }
 
-    return `${minutes}m`;
+    const [hours, minutes] = time.split(":");
+
+    const hour = parseInt(hours, 10);
+
+    const period = hour >= 12 ? "PM" : "AM";
+
+    const displayHour =
+      hour % 12 === 0
+        ? 12
+        : hour % 12;
+
+    return `${displayHour}:${minutes} ${period}`;
   };
 
   // =========================================
@@ -184,6 +213,68 @@ function Dashboard() {
           );
         }
 
+        // =====================================
+        // SUBJECT PROGRESS
+        // =====================================
+
+        const subjectResponse =
+          await fetch(
+            SUBJECT_API,
+            {
+              method: "GET",
+              headers
+            }
+          );
+
+        if (subjectResponse.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setLoading(false);
+          return;
+        }
+
+        const subjectData =
+          await subjectResponse.json();
+
+        if (subjectResponse.ok) {
+          setSubjectProgress(
+            Array.isArray(subjectData)
+              ? subjectData
+              : []
+          );
+        }
+
+        // =====================================
+        // WEEKLY STUDY
+        // =====================================
+
+        const weeklyResponse =
+          await fetch(
+            WEEKLY_API,
+            {
+              method: "GET",
+              headers
+            }
+          );
+
+        if (weeklyResponse.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setLoading(false);
+          return;
+        }
+
+        const weeklyData =
+          await weeklyResponse.json();
+
+        if (weeklyResponse.ok) {
+          setWeeklyStudy(
+            Array.isArray(weeklyData)
+              ? weeklyData
+              : []
+          );
+        }
+
       } catch (error) {
         console.log(
           "Dashboard Error:",
@@ -237,30 +328,36 @@ function Dashboard() {
   const totalNotes = notes.length;
 
   // =========================================
-  // FORMAT TASK TIME
+  // SUBJECT PROGRESS
   // =========================================
 
-  const formatTaskTime = (time) => {
-    if (!time) {
-      return "";
-    }
+  const maxSubjectSeconds =
+    subjectProgress.length > 0
+      ? Math.max(
+          ...subjectProgress.map(
+            (subject) =>
+              Number(
+                subject.totalSeconds
+              ) || 0
+          )
+        )
+      : 0;
 
-    const [hours, minutes] =
-      time.split(":");
+  // =========================================
+  // WEEKLY MAX
+  // =========================================
 
-    const hour =
-      parseInt(hours, 10);
-
-    const period =
-      hour >= 12 ? "PM" : "AM";
-
-    const displayHour =
-      hour % 12 === 0
-        ? 12
-        : hour % 12;
-
-    return `${displayHour}:${minutes} ${period}`;
-  };
+  const maxWeeklySeconds =
+    weeklyStudy.length > 0
+      ? Math.max(
+          ...weeklyStudy.map(
+            (day) =>
+              Number(
+                day.totalSeconds
+              ) || 0
+          )
+        )
+      : 0;
 
   // =========================================
   // PAGE
@@ -441,8 +538,6 @@ function Dashboard() {
 
         <div className="study-progress-grid">
 
-          {/* Today */}
-
           <div className="study-progress-card">
 
             <span>
@@ -459,8 +554,6 @@ function Dashboard() {
 
           </div>
 
-
-          {/* Previous Day */}
 
           <div className="study-progress-card">
 
@@ -479,8 +572,6 @@ function Dashboard() {
           </div>
 
 
-          {/* Last Week */}
-
           <div className="study-progress-card">
 
             <span>
@@ -497,8 +588,6 @@ function Dashboard() {
 
           </div>
 
-
-          {/* Last Month */}
 
           <div className="study-progress-card">
 
@@ -522,15 +611,213 @@ function Dashboard() {
 
 
       {/* =================================
+          WEEKLY STUDY
+      ================================= */}
+
+      <section className="dashboard-box dashboard-weekly-study">
+
+        <div className="box-header">
+
+          <div>
+
+            <h2>
+              Study This Week
+            </h2>
+
+            <p>
+              Your daily study time for the last 7 days
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div className="weekly-study-chart">
+
+          {loading && (
+            <div className="weekly-study-empty">
+              Loading weekly study data...
+            </div>
+          )}
+
+
+          {!loading &&
+            weeklyStudy.length === 0 && (
+              <div className="weekly-study-empty">
+                No weekly study data available yet.
+              </div>
+            )}
+
+
+          {!loading &&
+            weeklyStudy.map((day) => {
+
+              const totalSeconds =
+                Number(
+                  day.totalSeconds
+                ) || 0;
+
+              const barHeight =
+                maxWeeklySeconds > 0
+                  ? (
+                      totalSeconds /
+                      maxWeeklySeconds
+                    ) * 100
+                  : 0;
+
+              return (
+                <div
+                  className="weekly-study-day"
+                  key={day.date}
+                >
+
+                  <div className="weekly-study-value">
+
+                    {totalSeconds > 0
+                      ? formatStudyTime(
+                          totalSeconds
+                        )
+                      : "0m"}
+
+                  </div>
+
+
+                  <div className="weekly-study-bar-area">
+
+                    <div
+                      className="weekly-study-bar"
+                      style={{
+                        height: `${barHeight}%`
+                      }}
+                    />
+
+                  </div>
+
+
+                  <div className="weekly-study-label">
+
+                    {day.day}
+
+                  </div>
+
+                </div>
+              );
+            })}
+
+        </div>
+
+      </section>
+
+
+      {/* =================================
+          STUDY BY SUBJECT
+      ================================= */}
+
+      <section className="dashboard-box dashboard-subject-progress">
+
+        <div className="box-header">
+
+          <div>
+
+            <h2>
+              Study By Subject
+            </h2>
+
+            <p>
+              Total time spent on each subject
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div className="subject-progress-list">
+
+          {loading && (
+            <div className="subject-progress-empty">
+              Loading subject progress...
+            </div>
+          )}
+
+
+          {!loading &&
+            subjectProgress.length === 0 && (
+              <div className="subject-progress-empty">
+                No study data available yet.
+              </div>
+            )}
+
+
+          {!loading &&
+            subjectProgress
+              .slice(0, 8)
+              .map((item) => {
+
+                const totalSeconds =
+                  Number(
+                    item.totalSeconds
+                  ) || 0;
+
+                const percentage =
+                  maxSubjectSeconds > 0
+                    ? (
+                        totalSeconds /
+                        maxSubjectSeconds
+                      ) * 100
+                    : 0;
+
+                return (
+                  <div
+                    className="subject-progress-row"
+                    key={item._id}
+                  >
+
+                    <div className="subject-progress-header">
+
+                      <span>
+                        {item._id}
+                      </span>
+
+                      <strong>
+                        {formatStudyTime(
+                          totalSeconds
+                        )}
+                      </strong>
+
+                    </div>
+
+
+                    <div className="subject-progress-bar">
+
+                      <div
+                        className="subject-progress-fill"
+                        style={{
+                          width:
+                            `${percentage}%`
+                        }}
+                      />
+
+                    </div>
+
+                  </div>
+                );
+              })}
+
+        </div>
+
+      </section>
+
+
+      {/* =================================
           MAIN DASHBOARD GRID
       ================================= */}
 
       <section className="dashboard-grid">
 
 
-        {/* =================================
-            TODAY'S TASKS
-        ================================= */}
+        {/* TODAY'S TASKS */}
 
         <div className="dashboard-box">
 
@@ -656,9 +943,7 @@ function Dashboard() {
         </div>
 
 
-        {/* =================================
-            RECENT NOTES
-        ================================= */}
+        {/* RECENT NOTES */}
 
         <div className="dashboard-box">
 

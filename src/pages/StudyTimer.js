@@ -175,6 +175,7 @@ function StudyTimer() {
         setLastMonthSeconds(
           data.lastMonthSeconds || 0
         );
+
       } catch (error) {
         console.log(
           "Study Statistics Error:",
@@ -228,6 +229,7 @@ function StudyTimer() {
               ? data
               : []
           );
+
         } catch (error) {
           console.log(
             "Study History Error:",
@@ -270,8 +272,10 @@ function StudyTimer() {
 
     timerIntervalRef.current =
       setInterval(() => {
+
         setTimeLeft(
           (previousTime) => {
+
             if (previousTime <= 1) {
               return 0;
             }
@@ -279,6 +283,7 @@ function StudyTimer() {
             return previousTime - 1;
           }
         );
+
       }, 1000);
 
     return () => {
@@ -291,7 +296,39 @@ function StudyTimer() {
           null;
       }
     };
+
   }, [isRunning]);
+
+  // =========================================
+  // ADD CURRENT RUNNING TIME
+  // =========================================
+
+  const addCurrentRunningTime = () => {
+
+    if (
+      !lastResumeTimeRef.current
+    ) {
+      return;
+    }
+
+    const now = Date.now();
+
+    const runningSeconds =
+      Math.floor(
+        (
+          now -
+          lastResumeTimeRef.current
+        ) / 1000
+      );
+
+    if (runningSeconds > 0) {
+      accumulatedSecondsRef.current +=
+        runningSeconds;
+    }
+
+    lastResumeTimeRef.current =
+      null;
+  };
 
   // =========================================
   // SAVE STUDY SESSION
@@ -300,6 +337,7 @@ function StudyTimer() {
   const saveStudySession =
     useCallback(
       async () => {
+
         if (
           !sessionStartRef.current ||
           savingSessionRef.current
@@ -311,29 +349,6 @@ function StudyTimer() {
           true;
 
         try {
-          if (
-            isRunningRef.current &&
-            lastResumeTimeRef.current
-          ) {
-            const now = Date.now();
-
-            const runningSeconds =
-              Math.floor(
-                (
-                  now -
-                  lastResumeTimeRef.current
-                ) / 1000
-              );
-
-            accumulatedSecondsRef.current +=
-              Math.max(
-                runningSeconds,
-                0
-              );
-
-            lastResumeTimeRef.current =
-              null;
-          }
 
           const actualSeconds =
             accumulatedSecondsRef.current;
@@ -359,6 +374,7 @@ function StudyTimer() {
                 },
 
                 body: JSON.stringify({
+
                   subject:
                     subject.trim() ||
                     "General Study",
@@ -395,14 +411,18 @@ function StudyTimer() {
           await fetchStudySessions();
 
           return true;
+
         } catch (error) {
+
           console.log(
             "Save Study Session Error:",
             error.message
           );
 
           return false;
+
         } finally {
+
           savingSessionRef.current =
             false;
         }
@@ -419,6 +439,7 @@ function StudyTimer() {
   // =========================================
 
   useEffect(() => {
+
     if (
       timeLeft !== 0 ||
       !hasStarted
@@ -428,6 +449,13 @@ function StudyTimer() {
 
     const completeSession =
       async () => {
+
+        // IMPORTANT:
+        // Add the final running seconds
+        // BEFORE turning isRunning off.
+
+        addCurrentRunningTime();
+
         isRunningRef.current =
           false;
 
@@ -452,6 +480,7 @@ function StudyTimer() {
       };
 
     completeSession();
+
   }, [
     timeLeft,
     hasStarted,
@@ -466,10 +495,12 @@ function StudyTimer() {
   // =========================================
 
   const handleStart = () => {
+
     const selectedDuration =
       getSelectedDuration();
 
     if (selectedDuration <= 0) {
+
       alert(
         "Please enter a study duration."
       );
@@ -478,6 +509,7 @@ function StudyTimer() {
     }
 
     if (!subject.trim()) {
+
       alert(
         "Please enter what you are studying."
       );
@@ -485,9 +517,10 @@ function StudyTimer() {
       return;
     }
 
-    // First start
+    // FIRST START
 
     if (!hasStarted) {
+
       sessionStartRef.current =
         new Date();
 
@@ -511,9 +544,10 @@ function StudyTimer() {
       return;
     }
 
-    // Resume
+    // RESUME
 
     if (!isRunning) {
+
       lastResumeTimeRef.current =
         Date.now();
 
@@ -529,6 +563,7 @@ function StudyTimer() {
   // =========================================
 
   const handlePause = () => {
+
     if (
       !isRunningRef.current ||
       !lastResumeTimeRef.current
@@ -536,24 +571,7 @@ function StudyTimer() {
       return;
     }
 
-    const now = Date.now();
-
-    const runningSeconds =
-      Math.floor(
-        (
-          now -
-          lastResumeTimeRef.current
-        ) / 1000
-      );
-
-    accumulatedSecondsRef.current +=
-      Math.max(
-        runningSeconds,
-        0
-      );
-
-    lastResumeTimeRef.current =
-      null;
+    addCurrentRunningTime();
 
     isRunningRef.current =
       false;
@@ -567,32 +585,18 @@ function StudyTimer() {
 
   const handleEndAndSave =
     async () => {
+
       if (!hasStarted) {
         return;
       }
 
+      // Capture the currently running
+      // portion before stopping.
+
       if (
-        isRunningRef.current &&
-        lastResumeTimeRef.current
+        isRunningRef.current
       ) {
-        const now = Date.now();
-
-        const runningSeconds =
-          Math.floor(
-            (
-              now -
-              lastResumeTimeRef.current
-            ) / 1000
-          );
-
-        accumulatedSecondsRef.current +=
-          Math.max(
-            runningSeconds,
-            0
-          );
-
-        lastResumeTimeRef.current =
-          null;
+        addCurrentRunningTime();
       }
 
       isRunningRef.current =
@@ -622,15 +626,17 @@ function StudyTimer() {
   // RESET
   // =========================================
 
-  const handleReset = () => {
+  const handleReset = async () => {
+
     if (hasStarted) {
+
       const shouldSave =
         window.confirm(
           "Do you want to save the study time before resetting?"
         );
 
       if (shouldSave) {
-        handleEndAndSave();
+        await handleEndAndSave();
         return;
       }
 
@@ -668,6 +674,7 @@ function StudyTimer() {
 
   const handleDeleteSession =
     async (sessionId) => {
+
       const confirmDelete =
         window.confirm(
           "Are you sure you want to delete this study session?"
@@ -678,6 +685,7 @@ function StudyTimer() {
       }
 
       try {
+
         const token = getToken();
 
         const response =
@@ -712,6 +720,7 @@ function StudyTimer() {
         await fetchSummary();
 
       } catch (error) {
+
         console.log(
           "Delete Study Session Error:",
           error.message
@@ -729,6 +738,7 @@ function StudyTimer() {
     type,
     value
   ) => {
+
     if (hasStarted) {
       return;
     }
@@ -741,6 +751,7 @@ function StudyTimer() {
     }
 
     if (type === "hours") {
+
       const finalValue =
         Math.min(
           Number(numericValue),
@@ -753,6 +764,7 @@ function StudyTimer() {
     }
 
     if (type === "minutes") {
+
       const finalValue =
         Math.min(
           Number(numericValue),
@@ -765,6 +777,7 @@ function StudyTimer() {
     }
 
     if (type === "seconds") {
+
       const finalValue =
         Math.min(
           Number(numericValue),
@@ -784,6 +797,7 @@ function StudyTimer() {
   const formatTime = (
     totalSeconds
   ) => {
+
     const h = Math.floor(
       totalSeconds / 3600
     );
@@ -796,6 +810,7 @@ function StudyTimer() {
       totalSeconds % 60;
 
     if (h > 0) {
+
       return `${String(h).padStart(
         2,
         "0"
@@ -824,6 +839,7 @@ function StudyTimer() {
   const formatStudyTime = (
     totalSeconds
   ) => {
+
     const h = Math.floor(
       totalSeconds / 3600
     );
@@ -846,6 +862,7 @@ function StudyTimer() {
   const formatSessionDuration = (
     totalSeconds
   ) => {
+
     const h = Math.floor(
       totalSeconds / 3600
     );
@@ -869,12 +886,13 @@ function StudyTimer() {
   };
 
   // =========================================
-  // FORMAT SESSION DATE
+  // FORMAT DATE
   // =========================================
 
   const formatSessionDate = (
     dateValue
   ) => {
+
     const date =
       new Date(dateValue);
 
@@ -889,12 +907,13 @@ function StudyTimer() {
   };
 
   // =========================================
-  // FORMAT SESSION START TIME
+  // FORMAT START TIME
   // =========================================
 
   const formatSessionStartTime = (
     dateValue
   ) => {
+
     const date =
       new Date(dateValue);
 
@@ -912,6 +931,7 @@ function StudyTimer() {
   // =========================================
 
   const getStatusMessage = () => {
+
     if (isRunning) {
       return "Study session is in progress...";
     }
@@ -930,9 +950,7 @@ function StudyTimer() {
   return (
     <main className="timer-page">
 
-      {/* =================================
-          HEADER
-      ================================= */}
+      {/* HEADER */}
 
       <div className="timer-header">
 
@@ -952,9 +970,7 @@ function StudyTimer() {
       </div>
 
 
-      {/* =================================
-          TIMER CONTAINER
-      ================================= */}
+      {/* TIMER CONTAINER */}
 
       <div className="timer-container">
 
@@ -1064,7 +1080,7 @@ function StudyTimer() {
         </div>
 
 
-        {/* TIMER */}
+        {/* TIMER DISPLAY */}
 
         <div className="timer-display">
 
@@ -1125,9 +1141,7 @@ function StudyTimer() {
         </div>
 
 
-        {/* =================================
-            STUDY STATISTICS
-        ================================= */}
+        {/* STUDY STATISTICS */}
 
         <div className="timer-info">
 
@@ -1193,9 +1207,7 @@ function StudyTimer() {
         </div>
 
 
-        {/* =================================
-            STUDY HISTORY
-        ================================= */}
+        {/* STUDY HISTORY */}
 
         <div className="study-history">
 
@@ -1252,7 +1264,7 @@ function StudyTimer() {
 
                     <div className="study-history-time">
 
-                      {/* Delete icon BEFORE start time */}
+                      {/* Delete icon before time */}
 
                       <button
                         type="button"
@@ -1269,16 +1281,12 @@ function StudyTimer() {
                       </button>
 
 
-                      {/* Study start time */}
-
                       <span>
                         {formatSessionStartTime(
                           session.startTime
                         )}
                       </span>
 
-
-                      {/* Actual study duration */}
 
                       <strong>
                         {formatSessionDuration(

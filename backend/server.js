@@ -5,12 +5,14 @@ const multer = require("multer");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 const connectDB = require("./config/db");
 const Note = require("./models/Note");
 const User = require("./models/User");
 const StudyPlan = require("./models/StudyPlan");
 const StudySession = require("./models/StudySession");
+const AIConversation = require("./models/AIConversation");
 const authenticateToken = require("./middleware/auth");
 
 dotenv.config();
@@ -935,11 +937,16 @@ app.get(
     authenticateToken,
     async (req, res) => {
         try {
+            const userId =
+                new mongoose.Types.ObjectId(
+                    req.user.userId
+                );
+
             const subjectSummary =
                 await StudySession.aggregate([
                     {
                         $match: {
-                            userId: req.user.userId
+                            userId: userId
                         }
                     },
 
@@ -973,6 +980,91 @@ app.get(
             res.status(500).json({
                 message:
                     "Failed to calculate subject study time."
+            });
+        }
+    }
+);
+
+// =========================================
+// STUDY SESSION - LAST 7 DAYS
+// =========================================
+
+app.get(
+    "/api/study-sessions/weekly",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const now = new Date();
+
+            const startDate = new Date(now);
+            startDate.setHours(0, 0, 0, 0);
+            startDate.setDate(
+                startDate.getDate() - 6
+            );
+
+            const sessions =
+                await StudySession.find({
+                    userId: req.user.userId,
+                    startTime: {
+                        $gte: startDate
+                    }
+                }).sort({
+                    startTime: 1
+                });
+
+            const dailyData = [];
+
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startDate);
+
+                day.setDate(
+                    startDate.getDate() + i
+                );
+
+                const nextDay = new Date(day);
+
+                nextDay.setDate(
+                    day.getDate() + 1
+                );
+
+                let totalSeconds = 0;
+
+                sessions.forEach((session) => {
+                    const sessionDate =
+                        new Date(session.startTime);
+
+                    if (
+                        sessionDate >= day &&
+                        sessionDate < nextDay
+                    ) {
+                        totalSeconds +=
+                            Number(session.duration) || 0;
+                    }
+                });
+
+                dailyData.push({
+                    date: day.toISOString().split("T")[0],
+                    day: day.toLocaleDateString(
+                        "en-IN",
+                        {
+                            weekday: "short"
+                        }
+                    ),
+                    totalSeconds
+                });
+            }
+
+            res.status(200).json(dailyData);
+
+        } catch (error) {
+            console.log(
+                "Weekly Study Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to calculate weekly study data."
             });
         }
     }
@@ -1014,6 +1106,129 @@ app.delete(
             res.status(500).json({
                 message:
                     "Failed to delete study session."
+            });
+        }
+    }
+);
+
+// =========================================
+// AI CONVERSATIONS - GET ALL
+// =========================================
+
+app.get(
+    "/api/ai-conversations",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const conversations =
+                await AIConversation.find({
+                    userId: req.user.userId
+                }).sort({
+                    createdAt: 1
+                });
+
+            res.status(200).json(conversations);
+
+        } catch (error) {
+            console.log(
+                "Get AI Conversations Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to fetch AI conversations."
+            });
+        }
+    }
+);
+
+
+// =========================================
+// AI CONVERSATIONS - CREATE
+// =========================================
+
+app.post(
+    "/api/ai-conversations",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const {
+                question,
+                response
+            } = req.body;
+
+            if (!question || !response) {
+                return res.status(400).json({
+                    message:
+                        "Question and response are required."
+                });
+            }
+
+            const conversation =
+                await AIConversation.create({
+                    userId: req.user.userId,
+                    question: question.trim(),
+                    response: response.trim()
+                });
+
+            res.status(201).json({
+                message:
+                    "AI conversation saved successfully.",
+                conversation
+            });
+
+        } catch (error) {
+            console.log(
+                "Create AI Conversation Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to save AI conversation."
+            });
+        }
+    }
+);
+
+
+// =========================================
+// AI CONVERSATIONS - DELETE
+// =========================================
+
+app.delete(
+    "/api/ai-conversations/:id",
+    authenticateToken,
+    async (req, res) => {
+        try {
+            const conversation =
+                await AIConversation.findOneAndDelete({
+                    _id: req.params.id,
+                    userId: req.user.userId
+                });
+
+            if (!conversation) {
+                return res.status(404).json({
+                    message:
+                        "AI conversation not found."
+                });
+            }
+
+            res.status(200).json({
+                message:
+                    "AI conversation deleted successfully."
+            });
+
+        } catch (error) {
+            console.log(
+                "Delete AI Conversation Error:",
+                error.message
+            );
+
+            res.status(500).json({
+                message:
+                    "Failed to delete AI conversation."
             });
         }
     }

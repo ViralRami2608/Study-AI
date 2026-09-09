@@ -868,6 +868,109 @@ body {
   font-size: 14px;
 }
 
+/* =========================================
+   DASHBOARD - WEEKLY STUDY
+========================================= */
+
+.dashboard-weekly-study {
+  margin-bottom: 24px;
+}
+
+.weekly-study-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  height: 260px;
+  margin-top: 20px;
+  padding: 10px 10px 0;
+  border-bottom: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+.weekly-study-day {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.weekly-study-value {
+  min-height: 18px;
+  margin-bottom: 7px;
+  color: #64748b;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.weekly-study-bar-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 45px;
+  height: 180px;
+}
+
+.weekly-study-bar {
+  width: 30px;
+  min-height: 3px;
+  border-radius: 7px 7px 0 0;
+  background-color: #2563eb;
+  transition: height 0.3s ease;
+}
+
+.weekly-study-label {
+  margin-top: 9px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.weekly-study-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 220px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* =========================================
+   WEEKLY STUDY RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+  .weekly-study-chart {
+    gap: 6px;
+    height: 220px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .weekly-study-bar-area {
+    width: 32px;
+    height: 150px;
+  }
+
+  .weekly-study-bar {
+    width: 22px;
+  }
+
+  .weekly-study-value {
+    font-size: 9px;
+  }
+
+  .weekly-study-label {
+    font-size: 11px;
+  }
+}
+
 /* ============================= */
 /* STATISTICS CARDS */
 /* ============================= */
@@ -1016,6 +1119,69 @@ body {
   .study-progress-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================================
+   DASHBOARD - SUBJECT PROGRESS
+========================================= */
+
+.dashboard-subject-progress {
+  margin-bottom: 24px;
+}
+
+.subject-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.subject-progress-row {
+  width: 100%;
+}
+
+.subject-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 7px;
+}
+
+.subject-progress-header span {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.subject-progress-header strong {
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.subject-progress-bar {
+  width: 100%;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #e2e8f0;
+}
+
+.subject-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  background-color: #2563eb;
+  transition: width 0.3s ease;
+}
+
+.subject-progress-empty {
+  padding: 25px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
 }
 
 /* ============================= */
