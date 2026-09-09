@@ -868,108 +868,88 @@ body {
   font-size: 14px;
 }
 
-/* =========================================
-   DASHBOARD - WEEKLY STUDY
-========================================= */
-
-.dashboard-weekly-study {
-  margin-bottom: 24px;
+.ai-conversations {
+width: 100%;
+max-height: 520px;
+overflow-y: auto;
+padding: 10px 5px 20px;
+box-sizing: border-box;
 }
 
-.weekly-study-chart {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 18px;
-  height: 260px;
-  margin-top: 20px;
-  padding: 10px 10px 0;
-  border-bottom: 1px solid #e2e8f0;
-  box-sizing: border-box;
+.ai-conversation {
+width: 100%;
+margin-bottom: 20px;
 }
 
-.weekly-study-day {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: flex-end;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
+.ai-user-row {
+display: flex;
+justify-content: flex-end;
+width: 100%;
+margin-bottom: 12px;
 }
 
-.weekly-study-value {
-  min-height: 18px;
-  margin-bottom: 7px;
-  color: #64748b;
-  font-size: 11px;
-  text-align: center;
-  white-space: nowrap;
+.ai-user-message {
+max-width: 70%;
+padding: 12px 16px;
+border-radius: 18px 18px 4px 18px;
+background: #2563eb;
+color: white;
+font-size: 14px;
+line-height: 1.5;
+box-sizing: border-box;
 }
 
-.weekly-study-bar-area {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 45px;
-  height: 180px;
+.ai-answer-row {
+display: flex;
+align-items: flex-start;
+justify-content: flex-start;
+gap: 10px;
+width: 100%;
 }
 
-.weekly-study-bar {
-  width: 30px;
-  min-height: 3px;
-  border-radius: 7px 7px 0 0;
-  background-color: #2563eb;
-  transition: height 0.3s ease;
+.ai-chat-icon {
+width: 36px;
+height: 36px;
+min-width: 36px;
+border-radius: 50%;
+background: #e8f1ff;
+color: #2563eb;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+font-weight: 700;
 }
 
-.weekly-study-label {
-  margin-top: 9px;
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 600;
+.ai-answer-message {
+max-width: 70%;
+padding: 12px 16px;
+border-radius: 4px 18px 18px 18px;
+background: #f1f5f9;
+color: #1e293b;
+box-sizing: border-box;
 }
 
-.weekly-study-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 220px;
-  color: #64748b;
-  font-size: 14px;
-  text-align: center;
+.ai-answer-message strong {
+display: block;
+margin-bottom: 5px;
+color: #2563eb;
+font-size: 13px;
 }
 
-/* =========================================
-   WEEKLY STUDY RESPONSIVE
-========================================= */
-
-@media (max-width: 600px) {
-  .weekly-study-chart {
-    gap: 6px;
-    height: 220px;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .weekly-study-bar-area {
-    width: 32px;
-    height: 150px;
-  }
-
-  .weekly-study-bar {
-    width: 22px;
-  }
-
-  .weekly-study-value {
-    font-size: 9px;
-  }
-
-  .weekly-study-label {
-    font-size: 11px;
-  }
+.ai-answer-message p {
+margin: 0;
+font-size: 14px;
+line-height: 1.6;
 }
+
+@media (max-width: 768px) {
+.ai-user-message,
+.ai-answer-message {
+max-width: 85%;
+}
+}
+
 
 /* ============================= */
 /* STATISTICS CARDS */
@@ -1475,6 +1455,181 @@ body {
   font-size: 13px;
   cursor: pointer;
 }
+
+/* =========================================
+AI CHAT CONVERSATION
+========================================= */
+
+.ai-conversations {
+width: 100%;
+max-height: 520px;
+overflow-y: auto;
+padding: 10px 5px 20px;
+box-sizing: border-box;
+}
+
+/* Each question + answer */
+
+.ai-conversation {
+width: 100%;
+margin-bottom: 24px;
+}
+
+/* Message row */
+
+.ai-message-row {
+display: flex;
+width: 100%;
+margin-bottom: 12px;
+}
+
+/* =========================================
+USER MESSAGE - RIGHT SIDE
+========================================= */
+
+.ai-user-row {
+justify-content: flex-end;
+}
+
+.ai-user-message {
+max-width: 70%;
+padding: 12px 16px;
+border-radius: 18px 18px 4px 18px;
+background-color: #2563eb;
+color: white;
+box-sizing: border-box;
+}
+
+.ai-user-message p {
+margin: 0;
+line-height: 1.5;
+font-size: 14px;
+}
+
+/* =========================================
+AI MESSAGE - LEFT SIDE
+========================================= */
+
+.ai-ai-row {
+justify-content: flex-start;
+align-items: flex-start;
+gap: 10px;
+}
+
+.ai-ai-row .ai-icon {
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 36px;
+height: 36px;
+border-radius: 50%;
+background-color: #e8f1ff;
+color: #2563eb;
+font-size: 12px;
+font-weight: 700;
+}
+
+.ai-ai-message {
+max-width: 70%;
+padding: 12px 16px;
+border-radius: 4px 18px 18px 18px;
+background-color: #f1f5f9;
+color: #1e293b;
+box-sizing: border-box;
+}
+
+.ai-ai-message strong {
+display: block;
+margin-bottom: 5px;
+color: #2563eb;
+font-size: 13px;
+}
+
+.ai-ai-message p {
+margin: 0;
+line-height: 1.6;
+font-size: 14px;
+}
+
+/* =========================================
+CHAT INPUT
+========================================= */
+
+.ai-input-area {
+display: flex;
+align-items: center;
+gap: 10px;
+width: 100%;
+padding-top: 15px;
+border-top: 1px solid #e2e8f0;
+}
+
+.ai-input-area input {
+flex: 1;
+min-width: 0;
+padding: 13px 16px;
+border: 1px solid #cbd5e1;
+border-radius: 10px;
+outline: none;
+font-size: 14px;
+box-sizing: border-box;
+}
+
+.ai-input-area input:focus {
+border-color: #2563eb;
+}
+
+.ai-input-area button {
+padding: 13px 22px;
+border: none;
+border-radius: 10px;
+background-color: #2563eb;
+color: white;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+}
+
+.ai-input-area button:hover {
+background-color: #1d4ed8;
+}
+
+.ai-input-area button:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
+
+/* =========================================
+MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+.ai-conversations {
+flex: 1;
+min-height: 0;
+width: 100%;
+overflow-y: auto;
+padding: 10px 5px 10px;
+box-sizing: border-box;
+}
+
+.ai-user-message,
+.ai-ai-message {
+max-width: 85%;
+}
+
+.ai-input-area {
+flex-shrink: 0;
+}
+
+.ai-input-area button {
+padding: 12px 15px;
+}
+
+}
+
 
 /* =====================================================
    NOTES PAGE
