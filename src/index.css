@@ -869,16 +869,22 @@ body {
 }
 
 .ai-conversations {
-width: 100%;
-max-height: 520px;
-overflow-y: auto;
-padding: 10px 5px 20px;
-box-sizing: border-box;
+    flex: 1;
+    min-height: 0;
+    max-height: 745px;
+    width: 100%;
+    overflow-y: auto;
+    padding: 10px 5px 20px;
+    box-sizing: border-box;
 }
 
 .ai-conversation {
 width: 100%;
 margin-bottom: 20px;
+}
+
+.ai-input-area {
+flex-shrink: 0;
 }
 
 .ai-user-row {
@@ -1099,6 +1105,201 @@ max-width: 85%;
   .study-progress-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================================
+   PROFESSIONAL WEEKLY STUDY CHART
+   ========================================= */
+
+.dashboard-weekly-study {
+    width: 100%;
+    overflow: hidden;
+}
+
+.weekly-study-chart {
+    position: relative;
+    width: 100%;
+    height: 290px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 25px 20px 12px;
+    box-sizing: border-box;
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f8fafc 100%
+    );
+}
+
+/* Subtle horizontal guide lines */
+
+.weekly-study-chart::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 25px;
+    bottom: 48px;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 48px,
+            #e9eef5 49px,
+            #e9eef5 50px
+        );
+    pointer-events: none;
+}
+
+/* Individual day */
+
+.weekly-study-day {
+    position: relative;
+    z-index: 1;
+
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Time shown above bar */
+
+.weekly-study-value {
+    min-height: 20px;
+    margin-bottom: 9px;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Bar background */
+
+.weekly-study-bar-area {
+    width: 100%;
+    max-width: 42px;
+    height: 175px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    background: #eef3f8;
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    box-shadow:
+        inset 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+/* Actual study bar */
+
+.weekly-study-bar {
+    width: 100%;
+    min-height: 0;
+
+    background: linear-gradient(
+        180deg,
+        #3b82f6 0%,
+        #2563eb 100%
+    );
+
+    border-radius: 10px 10px 4px 4px;
+
+    box-shadow:
+        0 4px 10px rgba(37, 99, 235, 0.18);
+
+    transition:
+        height 0.35s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+
+.weekly-study-day:hover .weekly-study-bar {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+/* Day name */
+
+.weekly-study-label {
+    margin-top: 10px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #64748b;
+
+    text-align: center;
+}
+
+/* Empty chart */
+
+.weekly-study-empty {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .weekly-study-chart {
+        height: 240px;
+        gap: 7px;
+        padding: 20px 8px 10px;
+    }
+
+    .weekly-study-chart::before {
+        left: 8px;
+        right: 8px;
+        top: 20px;
+        bottom: 43px;
+    }
+
+    .weekly-study-bar-area {
+        max-width: 30px;
+        height: 145px;
+        border-radius: 8px;
+    }
+
+    .weekly-study-bar {
+        border-radius: 8px 8px 3px 3px;
+    }
+
+    .weekly-study-value {
+        font-size: 10px;
+        margin-bottom: 7px;
+    }
+
+    .weekly-study-label {
+        margin-top: 8px;
+        font-size: 10px;
+    }
 }
 
 /* =========================================
@@ -3654,4 +3855,30 @@ padding: 12px 15px;
 /* Prevent horizontal overflow */
 body {
   overflow-x: hidden;
+}
+
+.ai-chat-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    text-align: left;
+    padding: 0;
+    overflow: hidden;
+}
+
+.ai-conversations {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    width: 100%;
+    overflow-y: auto;
+    padding: 10px 5px 20px;
+    box-sizing: border-box;
+}
+
+.ai-input-area {
+    flex-shrink: 0;
 }
