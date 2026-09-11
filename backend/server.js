@@ -14,11 +14,13 @@ const StudyPlan = require("./models/StudyPlan");
 const StudySession = require("./models/StudySession");
 const AIConversation = require("./models/AIConversation");
 const authenticateToken = require("./middleware/auth");
+const { GoogleGenAI } = require("@google/genai");
 
 dotenv.config();
 
 connectDB();
 
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -1233,6 +1235,74 @@ app.delete(
         }
     }
 );
+
+app.get("/api/ai/test", authenticateToken, async (req, res) => {
+try {
+const response = await ai.models.generateContent({
+model: "gemini-3.7-flash",
+contents: "Say hello to StudyAI in one short sentence."
+});
+
+    res.json({
+        success: true,
+        message: response.text
+    });
+
+} catch (error) {
+    console.error("Gemini Test Error:", error);
+
+    res.status(500).json({
+        success: false,
+        message: "Gemini API test failed"
+    });
+}
+
+});
+
+app.post("/api/ai/chat", authenticateToken, async (req, res) => {
+try {
+const { message } = req.body;
+
+    if (!message || !message.trim()) {
+        return res.status(400).json({
+            success: false,
+            message: "Message is required"
+        });
+    }
+
+    const stream = await ai.models.generateContentStream({
+        model: "gemini-3.8-flash",
+        contents: message.trim()
+    });
+
+    res.status(200);
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("Transfer-Encoding", "chunked");
+
+    for await (const chunk of stream) {
+        if (chunk.text) {
+            res.write(chunk.text);
+        }
+    }
+
+    res.end();
+
+} catch (error) {
+    console.error("Gemini Chat Error:", error);
+
+    if (!res.headersSent) {
+        return res.status(500).json({
+            success: false,
+            message: "Unable to get AI response"
+        });
+    }
+
+    res.end();
+}
+
+});
 
 // =========================================
 // ERROR HANDLER
